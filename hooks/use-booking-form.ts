@@ -6,16 +6,21 @@ import type { CheckfrontItem } from "@/lib/checkfront-types";
 
 export interface BookingFormState {
   currentStep: BookingStep;
-  categoryId: number | null;
-  categoryName: string | null;
+  /** Selected item ID (one of the 5 Sea Saba activities) */
+  selectedItemId: number | null;
   startDate: string | null; // YYYYMMDD
   endDate: string | null; // YYYYMMDD
+  /** Booking params e.g. { divers: 2 } or { guest: 4 } */
   params: Record<string, number>;
-  selectedItem: CheckfrontItem | null;
+  /** Full item object from rated API call (includes SLIP + pricing) */
+  ratedItem: CheckfrontItem | null;
+  /** SLIP token from the rated API response */
   selectedSlip: string | null;
   sessionId: string | null;
   customerForm: Record<string, string>;
   invoiceUrl: string | null;
+  /** Whether user confirmed advanced certification eligibility */
+  certConfirmed: boolean;
 }
 
 type Action =
@@ -26,17 +31,17 @@ type Action =
   | { type: "RESET" };
 
 const initialState: BookingFormState = {
-  currentStep: "category",
-  categoryId: null,
-  categoryName: null,
+  currentStep: "activity",
+  selectedItemId: null,
   startDate: null,
   endDate: null,
   params: {},
-  selectedItem: null,
+  ratedItem: null,
   selectedSlip: null,
   sessionId: null,
   customerForm: {},
   invoiceUrl: null,
+  certConfirmed: false,
 };
 
 function reducer(state: BookingFormState, action: Action): BookingFormState {

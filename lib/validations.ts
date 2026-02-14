@@ -18,11 +18,17 @@ export const bookingCreateSchema = z.object({
   ),
 });
 
+/**
+ * AI SDK v6 UIMessage format validation.
+ * Note: The chat route does lightweight validation directly
+ * since streamText + convertToModelMessages handle the full
+ * UIMessage format (parts array, metadata, etc.).
+ */
 export const chatMessageSchema = z.object({
   messages: z.array(
     z.object({
       role: z.enum(["user", "assistant", "system"]),
-      content: z.string(),
+      parts: z.array(z.object({ type: z.string() }).passthrough()),
     }).passthrough(),
   ).min(1),
 });

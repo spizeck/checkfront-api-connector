@@ -2,11 +2,12 @@ import { tool } from "ai";
 import { z } from "zod";
 import { getClient } from "./checkfront-client";
 import { getItemImageUrl, stripHtml } from "./utils";
+import { CF_ITEMS } from "./constants";
 
 export const checkfrontTools = {
   getCategories: tool({
     description:
-      "Get the list of available booking categories (e.g., Tours, Activities). Call this first to show the customer what types of experiences are available.",
+      "Get Sea Saba's booking categories. Use this to see what types of activities are available (diving, snorkeling, sunset cruises).",
     inputSchema: z.object({}),
     execute: async () => {
       const result = await getClient().getCategories();
@@ -22,8 +23,7 @@ export const checkfrontTools = {
   }),
 
   searchItems: tool({
-    description:
-      "Search for available booking items/activities. When dates and guest counts are provided, returns pricing, availability, and SLIP tokens needed to add items to a booking session. The param names vary by item (e.g. 'divers', 'snorkeler', 'guest', 'student'). Use getCategories first, then search with category_id and dates.",
+    description: `Search for Sea Saba activities with availability and pricing. Known items: Advanced 2-Tank Dive (ID ${CF_ITEMS.advanced2Tank}), Classic 2-Tank Dive (ID ${CF_ITEMS.classic2Tank}), Afternoon 1-Tank Dive (ID ${CF_ITEMS.afternoonDive}), Afternoon Snorkel (ID ${CF_ITEMS.afternoonSnorkel}), Sunset Cruise (ID ${CF_ITEMS.sunsetCruise}). When dates and guest counts are provided, returns pricing and SLIP tokens. Param names vary by item (e.g. 'divers', 'snorkeler', 'guest'). IMPORTANT: End dates are INCLUSIVE for all-day items — do NOT add +1.`,
     inputSchema: z.object({
       category_id: z.number().optional().describe("Filter by category ID"),
       start_date: z
@@ -69,7 +69,7 @@ export const checkfrontTools = {
 
   checkAvailability: tool({
     description:
-      "Check calendar availability for a specific item over a date range. Returns which dates have stock available (number = spots available, 0 = sold out).",
+      "Check Sea Saba calendar availability for a specific activity over a date range. Returns stock per date (number = spots available, 0 = sold out). Use INCLUSIVE end dates.",
     inputSchema: z.object({
       item_id: z.number().describe("The item ID to check availability for"),
       start_date: z.string().describe("Start date in YYYYMMDD format"),
@@ -95,7 +95,7 @@ export const checkfrontTools = {
 
   addToSession: tool({
     description:
-      "Add an item to the booking session (cart) using its SLIP token. The SLIP comes from a rated item search. Returns the session with pricing totals.",
+      "Add a Sea Saba activity to the booking cart using its SLIP token from searchItems. IMPORTANT: Before adding Advanced 2-Tank Dive (ID 5), confirm the customer meets certification requirements. Before adding Sunset Cruise (ID 194), confirm at least 8 guests.",
     inputSchema: z.object({
       slip: z.string().describe("The SLIP token from a rated item search"),
       session_id: z
@@ -144,7 +144,7 @@ export const checkfrontTools = {
 
   createBooking: tool({
     description:
-      "Finalize a booking with the session and customer details. Returns the checkout URL for payment. Only call this after collecting all required customer form fields.",
+      "Finalize a Sea Saba booking and get the Checkfront checkout URL for payment. Only call after: (1) items are in the session, (2) all required customer details collected. The checkout link redirects to Checkfront's secure payment page.",
     inputSchema: z.object({
       session_id: z.string().describe("The booking session ID"),
       customer_name: z.string().describe("Customer full name"),
@@ -188,6 +188,40 @@ export const checkfrontTools = {
     execute: async ({ session_id }) => {
       await getClient().clearSession(session_id);
       return { success: true };
+    },
+  }),
+
+  prepareContactRequest: tool({
+    description: `Collect customer info for requests that cannot be completed as online bookings. Use this for: sunset cruises with fewer than 8 guests, Discover Scuba Diving, certification courses (Open Water, Advanced, Technical), private charters, fishing trips, or any special request. This pre-fills a contact form that the customer can send to Sea Saba. After calling this, also remind the customer they can reach Sea Saba directly on WhatsApp: +599-416-2246.`,
+    inputSchema: z.object({
+      customer_name: z.string().describe("Customer's full name"),
+      customer_email: z.string().describe("Customer's email address"),
+      customer_phone: z.string().optional().describe("Customer's phone or WhatsApp number"),
+      request_type: z.enum([
+        "sunset_cruise_under_minimum",
+        "discover_scuba",
+        "open_water_course",
+        "advanced_course",
+        "technical_diving",
+        "private_charter",
+        "fishing",
+        "group_event",
+        "other",
+      ]).describe("Type of request"),
+      preferred_dates: z.string().optional().describe("Customer's preferred dates"),
+      guest_count: z.number().optional().describe("Number of guests"),
+      details: z.string().describe("Summary of what the customer is looking for"),
+    }),
+    execute: async (input) => {
+      // For now, return the structured data for display in the chat.
+      // When integrated into the main Sea Saba website, this will
+      // pre-populate the site's contact form.
+      return {
+        ...input,
+        status: "ready_for_contact_form",
+        whatsapp: "+599-416-2246",
+        message: "Your request details have been prepared. You can submit this to Sea Saba or contact them directly on WhatsApp.",
+      };
     },
   }),
 };

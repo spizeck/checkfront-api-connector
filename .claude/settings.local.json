@@ -8,7 +8,10 @@
       "Bash(npm install:*)",
       "Bash(npx next build:*)",
       "Bash(npx tsc:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "WebFetch(domain:drive.google.com)",
+      "Bash(npm run build:*)",
+      "Bash(node -e:*)"
     ]
   }
 }

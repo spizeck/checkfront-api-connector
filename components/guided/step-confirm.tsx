@@ -4,11 +4,25 @@ import { useState } from "react";
 import type { StepProps } from "@/app/guided/page";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { ACTIVITY_INFO } from "@/lib/constants";
+import { formatCfDate, inclusiveDaysBetween, parseCfDate } from "@/lib/date-range";
 
-export function StepConfirm({ state, session }: StepProps) {
+export function StepCheckout({ state, session }: StepProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [invoiceUrl, setInvoiceUrl] = useState<string | null>(state.invoiceUrl);
+
+  const activityInfo = state.selectedItemId
+    ? ACTIVITY_INFO[state.selectedItemId]
+    : null;
+
+  const numDays =
+    state.startDate && state.endDate
+      ? inclusiveDaysBetween(
+          parseCfDate(state.startDate),
+          parseCfDate(state.endDate),
+        )
+      : 1;
 
   async function handleSubmit() {
     if (!state.sessionId) {
@@ -64,16 +78,16 @@ export function StepConfirm({ state, session }: StepProps) {
         {/* Activity summary */}
         <div className="rounded-lg border border-[var(--color-border)] p-4">
           <h3 className="mb-2 font-semibold">Activity</h3>
-          <p className="font-medium">{state.selectedItem?.name}</p>
+          <p className="font-medium">
+            {activityInfo?.name || state.ratedItem?.name}
+          </p>
           {state.startDate && (
             <p className="text-sm text-[var(--color-muted)]">
-              {state.startDate.slice(0, 4)}-{state.startDate.slice(4, 6)}-{state.startDate.slice(6, 8)}
+              {formatCfDate(state.startDate)}
               {state.endDate && state.endDate !== state.startDate && (
-                <>
-                  {" to "}
-                  {state.endDate.slice(0, 4)}-{state.endDate.slice(4, 6)}-{state.endDate.slice(6, 8)}
-                </>
+                <> to {formatCfDate(state.endDate)}</>
               )}
+              {numDays > 1 && <> ({numDays} days)</>}
             </p>
           )}
           {Object.entries(state.params).map(([key, val]) => (
@@ -81,9 +95,9 @@ export function StepConfirm({ state, session }: StepProps) {
               <span className="capitalize">{key}</span>: {val}
             </p>
           ))}
-          {state.selectedItem?.rate && (
+          {state.ratedItem?.rate && (
             <p className="mt-2 text-lg font-bold">
-              {state.selectedItem.rate.summary?.price?.total || "Price on request"}
+              {state.ratedItem.rate.summary?.price?.total || "Price on request"}
             </p>
           )}
         </div>

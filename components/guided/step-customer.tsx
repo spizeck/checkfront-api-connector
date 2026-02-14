@@ -17,7 +17,7 @@ function isVisibleField(field: FormField): boolean {
   return true;
 }
 
-export function StepCustomer({ state, updateState, onNext }: StepProps) {
+export function StepDetails({ state, updateState, onNext }: StepProps) {
   const [fields, setFields] = useState<Record<string, FormField>>({});
   const [formData, setFormData] = useState<Record<string, string>>(state.customerForm);
   const [loading, setLoading] = useState(true);
@@ -209,7 +209,7 @@ export function StepCustomer({ state, updateState, onNext }: StepProps) {
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={handleNext}>Next: Confirm Booking</Button>
+        <Button onClick={handleNext}>Next: Complete Booking</Button>
       </div>
     </div>
   );

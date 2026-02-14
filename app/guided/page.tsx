@@ -4,13 +4,12 @@ import { useBookingForm, type BookingFormState } from "@/hooks/use-booking-form"
 import { useBookingSession } from "@/hooks/use-booking-session";
 import { Stepper } from "@/components/ui/stepper";
 import { Button } from "@/components/ui/button";
-import { StepCategory } from "@/components/guided/step-category";
+import { StepActivity } from "@/components/guided/step-activity";
 import { StepDates } from "@/components/guided/step-dates";
-import { StepParams } from "@/components/guided/step-params";
-import { StepItems } from "@/components/guided/step-items";
+import { StepGuests } from "@/components/guided/step-guests";
 import { StepReview } from "@/components/guided/step-review";
-import { StepCustomer } from "@/components/guided/step-customer";
-import { StepConfirm } from "@/components/guided/step-confirm";
+import { StepDetails } from "@/components/guided/step-customer";
+import { StepCheckout } from "@/components/guided/step-confirm";
 import type { BookingStep } from "@/lib/constants";
 
 export interface StepProps {
@@ -21,13 +20,12 @@ export interface StepProps {
 }
 
 const STEP_COMPONENTS: Record<BookingStep, React.ComponentType<StepProps>> = {
-  category: StepCategory,
+  activity: StepActivity,
   dates: StepDates,
-  params: StepParams,
-  items: StepItems,
+  guests: StepGuests,
   review: StepReview,
-  customer: StepCustomer,
-  confirm: StepConfirm,
+  details: StepDetails,
+  checkout: StepCheckout,
 };
 
 export default function GuidedBookingPage() {
@@ -50,7 +48,7 @@ export default function GuidedBookingPage() {
         />
       </div>
 
-      {state.currentStep !== "confirm" && (
+      {state.currentStep !== "checkout" && (
         <div className="flex justify-between border-t border-[var(--color-border)] pt-4">
           {!isFirstStep ? (
             <Button variant="secondary" onClick={prevStep}>

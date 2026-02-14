@@ -1,13 +1,12 @@
 import { BOOKING_STEPS, type BookingStep } from "@/lib/constants";
 
 const STEP_LABELS: Record<BookingStep, string> = {
-  category: "Category",
+  activity: "Activity",
   dates: "Dates",
-  params: "Guests",
-  items: "Activity",
+  guests: "Guests",
   review: "Review",
-  customer: "Details",
-  confirm: "Confirm",
+  details: "Details",
+  checkout: "Checkout",
 };
 
 interface StepperProps {

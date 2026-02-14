@@ -1,6 +1,8 @@
 "use client";
 
 import type { UIMessage } from "ai";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { ToolResultCard } from "./tool-result-card";
 
 interface MessageBubbleProps {
@@ -22,9 +24,22 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {message.parts.map((part, index) => {
           if (part.type === "text") {
             if (!part.text) return null;
+
+            if (isUser) {
+              // User messages: plain text, no markdown
+              return (
+                <div key={index} className="whitespace-pre-wrap text-sm">
+                  {part.text}
+                </div>
+              );
+            }
+
+            // Assistant messages: render markdown
             return (
-              <div key={index} className="whitespace-pre-wrap text-sm">
-                {part.text}
+              <div key={index} className="prose-chat text-sm">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {part.text}
+                </ReactMarkdown>
               </div>
             );
           }
