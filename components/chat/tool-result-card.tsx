@@ -13,18 +13,14 @@ export function ToolResultCard({ toolName, result }: ToolResultCardProps) {
   const data = result as Record<string, unknown>;
 
   switch (toolName) {
-    case "getCategories":
-      return <CategoriesCard data={data} />;
-    case "searchItems":
-      return <ItemsCard data={data} />;
+    case "rateItem":
+      return <RateCard data={data} />;
     case "checkAvailability":
       return <CalendarCard data={data} />;
     case "addToSession":
       return <SessionCard data={data} />;
     case "createBooking":
       return <CheckoutCard data={data} />;
-    case "getBookingFormFields":
-      return <FormFieldsCard data={data} />;
     case "clearSession":
       return (
         <div className="rounded border border-[var(--color-border)] p-2 text-xs text-[var(--color-muted)]">
@@ -38,97 +34,31 @@ export function ToolResultCard({ toolName, result }: ToolResultCardProps) {
   }
 }
 
-function CategoriesCard({ data }: { data: Record<string, unknown> }) {
-  const categories = (data.categories || []) as Array<{
-    category_id: number;
-    name: string;
-    description: string;
-    item_count: number;
-  }>;
+function RateCard({ data }: { data: Record<string, unknown> }) {
+  const name = data.name as string | undefined;
+  const price = data.price as string | undefined;
+  const available = data.available as number | undefined;
+  const status = data.status as string | undefined;
 
   return (
-    <div className="space-y-1">
-      {categories.map((cat) => (
-        <div
-          key={cat.category_id}
-          className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-2"
-        >
-          <span className="font-medium">{cat.name}</span>
-          {cat.description && (
-            <span className="ml-2 text-xs text-[var(--color-muted)]">
-              {cat.description}
-            </span>
-          )}
-          <Badge variant="neutral" className="ml-2">
-            {cat.item_count} items
-          </Badge>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ItemsCard({ data }: { data: Record<string, unknown> }) {
-  const items = (data.items || []) as Array<{
-    item_id: number;
-    name: string;
-    summary: string;
-    available: boolean;
-    stock: number;
-    price?: number;
-    price_summary?: string;
-    image_url?: string;
-  }>;
-
-  if (items.length === 0) {
-    return (
-      <div className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-3 text-sm">
-        No items found for the specified criteria.
+    <div className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-3">
+      <div className="flex items-start justify-between gap-2">
+        <p className="font-medium">{name}</p>
+        {price && (
+          <span className="whitespace-nowrap font-bold">{price}</span>
+        )}
       </div>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      {items.map((item) => (
-        <div
-          key={item.item_id}
-          className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-3"
+      <div className="mt-1">
+        <Badge
+          variant={
+            status === "UNAVAILABLE" || available === 0 ? "error" : "success"
+          }
         >
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="font-medium">{item.name}</p>
-              {item.summary && (
-                <p className="mt-0.5 text-xs text-[var(--color-muted)]">
-                  {item.summary}
-                </p>
-              )}
-            </div>
-            {item.price !== undefined && (
-              <span className="whitespace-nowrap font-bold">
-                {formatCurrency(item.price)}
-              </span>
-            )}
-          </div>
-          <div className="mt-1">
-            <Badge
-              variant={
-                item.available === false
-                  ? "error"
-                  : item.stock <= 3
-                    ? "warning"
-                    : "success"
-              }
-            >
-              {item.available === false
-                ? "Unavailable"
-                : item.stock <= 3
-                  ? `${item.stock} left`
-                  : "Available"}
-            </Badge>
-          </div>
-        </div>
-      ))}
+          {status === "UNAVAILABLE" || available === 0
+            ? "Unavailable"
+            : "Available"}
+        </Badge>
+      </div>
     </div>
   );
 }
@@ -167,20 +97,16 @@ function CalendarCard({ data }: { data: Record<string, unknown> }) {
 }
 
 function SessionCard({ data }: { data: Record<string, unknown> }) {
-  const summary = data.summary as {
-    sub_total: number;
-    tax_total: number;
-    total: number;
-  } | undefined;
+  const total = data.total as number | undefined;
 
   return (
     <div className="rounded border border-[var(--color-success)] bg-[var(--color-success-light)] p-3">
       <p className="text-sm font-medium text-[var(--color-success)]">
         Added to booking!
       </p>
-      {summary && (
+      {total !== undefined && (
         <p className="mt-1 text-sm">
-          Total: <span className="font-bold">{formatCurrency(summary.total)}</span>
+          Total: <span className="font-bold">{formatCurrency(total)}</span>
         </p>
       )}
     </div>
@@ -251,27 +177,6 @@ function CheckoutCard({ data }: { data: Record<string, unknown> }) {
           </p>
         </>
       )}
-    </div>
-  );
-}
-
-function FormFieldsCard({ data }: { data: Record<string, unknown> }) {
-  const fields = (data.fields || []) as Array<{
-    field_name: string;
-    label: string;
-    required: boolean;
-  }>;
-
-  return (
-    <div className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-2 text-xs">
-      <p className="mb-1 font-medium">Required information:</p>
-      <ul className="list-inside list-disc text-[var(--color-muted)]">
-        {fields
-          .filter((f) => f.required)
-          .map((f) => (
-            <li key={f.field_name}>{f.label}</li>
-          ))}
-      </ul>
     </div>
   );
 }

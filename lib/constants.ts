@@ -36,37 +36,82 @@ export const CF_ITEMS = {
   afternoonDive: 11,
   afternoonSnorkel: 12,
   sunsetCruise: 194,
+  rentalGear: 176,
 } as const;
 
-/** Friendly labels and descriptions for each activity */
-export const ACTIVITY_INFO: Record<
-  number,
-  { name: string; shortDesc: string; pickupTime: string; certRequired?: string }
-> = {
+// ---- Activity param & config types ----
+
+export interface ItemParam {
+  key: string;        // Checkfront param report ID
+  label: string;      // Display label
+  isLocal?: boolean;  // Local rate — must be booked as separate line item
+}
+
+export interface ActivityConfig {
+  name: string;
+  shortDesc: string;
+  pickupTime: string;
+  certRequired?: string;
+  params: ItemParam[];
+  minTotalGuests?: number; // Minimum total across all params (e.g. 8 for sunset cruise)
+}
+
+/** Single source of truth for all bookable activities, their params, and config */
+export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
   [CF_ITEMS.advanced2Tank]: {
     name: "Advanced 2-Tank Dive",
     shortDesc: "Deep pinnacle sites — Caribbean reef sharks, massive fish schools",
     pickupTime: "8:30 AM pickup",
     certRequired: "AOW + 20 dives, or OW + 50 dives",
+    params: [
+      { key: "diver2026rate", label: "Divers" },
+      { key: "diver", label: "Divers (Local Rate)", isLocal: true },
+    ],
   },
   [CF_ITEMS.classic2Tank]: {
     name: "Classic 2-Tank Dive",
     shortDesc: "Walls, reefs, turtles & stingrays — all certified divers welcome",
     pickupTime: "10:00 AM pickup",
+    params: [
+      { key: "diver2026rate", label: "Divers" },
+      { key: "diver", label: "Divers (Local Rate)", isLocal: true },
+    ],
   },
   [CF_ITEMS.afternoonDive]: {
     name: "Afternoon 1-Tank Dive",
     shortDesc: "Single dive, great add-on or lighter day option",
     pickupTime: "12:30 PM pickup",
+    params: [
+      { key: "diver2026rate", label: "Divers" },
+      { key: "diver", label: "Divers (Local Rate)", isLocal: true },
+    ],
   },
   [CF_ITEMS.afternoonSnorkel]: {
     name: "Afternoon Snorkel",
     shortDesc: "No certification needed — explore Saba's reefs",
     pickupTime: "12:30 PM pickup",
+    params: [
+      { key: "snorkeler", label: "Snorkelers" },
+      { key: "snorkelerlocal", label: "Snorkelers (Local Rate)", isLocal: true },
+    ],
   },
   [CF_ITEMS.sunsetCruise]: {
     name: "Sunset Cruise",
     shortDesc: "Evening cruise around Saba (minimum 8 guests)",
     pickupTime: "Evening",
+    params: [
+      { key: "adult", label: "Adults" },
+      { key: "youngadult1417", label: "Young Adults (14-17)" },
+      { key: "child513", label: "Children (5-13)" },
+    ],
+    minTotalGuests: 8,
+  },
+  [CF_ITEMS.rentalGear]: {
+    name: "Full Rental Gear",
+    shortDesc: "BCD, regulator, wetsuit, mask, fins — added per diver per day",
+    pickupTime: "Same as dive",
+    params: [
+      { key: "fullrentalgear", label: "Full Rental Gear" },
+    ],
   },
 };

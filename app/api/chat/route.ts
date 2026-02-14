@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     system: getSystemPrompt(),
     messages: modelMessages,
     tools: checkfrontTools,
-    stopWhen: stepCountIs(10),
+    stopWhen: stepCountIs(5),
   });
 
   return result.toUIMessageStreamResponse();
