@@ -39,7 +39,7 @@ export default function GuidedBookingPage() {
     <div className="flex flex-col gap-8 py-6">
       <Stepper currentStep={state.currentStep} />
 
-      <div className="min-h-[400px]">
+      <div className="min-h-400px">
         <StepComponent
           state={state}
           updateState={updateState}
@@ -49,7 +49,7 @@ export default function GuidedBookingPage() {
       </div>
 
       {state.currentStep !== "checkout" && (
-        <div className="flex justify-between border-t border-[var(--color-border)] pt-4">
+        <div className="flex justify-between border-t border-(--color-border) pt-4">
           {!isFirstStep ? (
             <Button variant="secondary" onClick={prevStep}>
               Back
@@ -65,7 +65,7 @@ export default function GuidedBookingPage() {
 
       {session.error && (
         <div
-          className="rounded-lg bg-[var(--color-error-light)] p-3 text-sm text-[var(--color-error)]"
+          className="rounded-lg bg-(--color-error-light) p-3 text-sm text-(--color-error)"
           role="alert"
         >
           {session.error}

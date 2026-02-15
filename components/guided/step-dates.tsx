@@ -80,7 +80,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">When would you like to go?</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Select your preferred dates for {activityName}
         </p>
       </div>
@@ -114,7 +114,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
       </div>
 
       {!isSingleDayItem && startDate && endDate && (
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="text-sm text-(--color-muted)">
           {(() => {
             try {
               const days = inclusiveDaysBetween(
@@ -145,7 +145,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
       )}
 
       {error && (
-        <p className="text-sm text-[var(--color-error)]" role="alert">
+        <p className="text-sm text-(--color-error)" role="alert">
           {error}
         </p>
       )}

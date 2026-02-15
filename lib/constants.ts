@@ -60,9 +60,9 @@ export interface ActivityConfig {
 export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
   [CF_ITEMS.advanced2Tank]: {
     name: "Advanced 2-Tank Dive",
-    shortDesc: "Deep pinnacle sites — Caribbean reef sharks, massive fish schools",
+    shortDesc: "Deep Walls & Pinnacles (Up to 110 ft / 33 m) - advanced divers only",
     pickupTime: "8:30 AM pickup",
-    certRequired: "AOW + 20 dives, or OW + 50 dives",
+    certRequired: "Advanced Open Water & 20 dives, or Open Water & 50 dives",
     params: [
       { key: "diver2026rate", label: "Divers" },
       { key: "diver", label: "Divers (Local Rate)", isLocal: true },
@@ -70,8 +70,9 @@ export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
   },
   [CF_ITEMS.classic2Tank]: {
     name: "Classic 2-Tank Dive",
-    shortDesc: "Walls, reefs, turtles & stingrays — all certified divers welcome",
+    shortDesc: "Scenic Reefs (Max 70 ft / 21 m) — all certified divers welcome",
     pickupTime: "10:00 AM pickup",
+    certRequired: "Open Water or Scuba Diver (with private guide)",
     params: [
       { key: "diver2026rate", label: "Divers" },
       { key: "diver", label: "Divers (Local Rate)", isLocal: true },
@@ -79,8 +80,9 @@ export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
   },
   [CF_ITEMS.afternoonDive]: {
     name: "Afternoon 1-Tank Dive",
-    shortDesc: "Single dive, great add-on or lighter day option",
+    shortDesc: "Relaxed Reef Dive (Max 70 ft / 21 m), great add-on or lighter day option",
     pickupTime: "12:30 PM pickup",
+    certRequired: "Open Water or Scuba Diver (with private guide)",
     params: [
       { key: "diver2026rate", label: "Divers" },
       { key: "diver", label: "Divers (Local Rate)", isLocal: true },
@@ -90,6 +92,7 @@ export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
     name: "Afternoon Snorkel",
     shortDesc: "No certification needed — explore Saba's reefs",
     pickupTime: "12:30 PM pickup",
+    certRequired: "Comfortable swimmer",
     params: [
       { key: "snorkeler", label: "Snorkelers" },
       { key: "snorkelerlocal", label: "Snorkelers (Local Rate)", isLocal: true },
@@ -108,7 +111,7 @@ export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
   },
   [CF_ITEMS.rentalGear]: {
     name: "Full Rental Gear",
-    shortDesc: "BCD, regulator, wetsuit, mask, fins — added per diver per day",
+    shortDesc: "BCD, regulator, wetsuit, mask, fins, dive computer — added per diver per day",
     pickupTime: "Same as dive",
     params: [
       { key: "fullrentalgear", label: "Full Rental Gear" },

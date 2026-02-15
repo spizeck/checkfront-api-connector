@@ -29,14 +29,17 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
     });
   }
 
+  // Items that require a certification check before proceeding
+  const CERT_ITEMS: Set<number> = new Set([
+    CF_ITEMS.advanced2Tank,
+    CF_ITEMS.classic2Tank,
+    CF_ITEMS.afternoonDive,
+  ]);
+
   function handleNext() {
     if (!state.selectedItemId) return;
 
-    // If Advanced 2-Tank selected, show certification confirmation
-    if (
-      state.selectedItemId === CF_ITEMS.advanced2Tank &&
-      !state.certConfirmed
-    ) {
+    if (CERT_ITEMS.has(state.selectedItemId) && !state.certConfirmed) {
       setShowCertWarning(true);
       return;
     }
@@ -54,7 +57,7 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">What would you like to do?</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Choose from our diving, snorkeling, and cruise experiences
         </p>
       </div>
@@ -73,14 +76,14 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
             >
               <CardTitle>{info.name}</CardTitle>
               <CardContent>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">
+                <p className="mt-1 text-sm text-(--color-muted)">
                   {info.shortDesc}
                 </p>
-                <p className="mt-2 text-xs font-medium text-[var(--color-primary)]">
+                <p className="mt-2 text-xs font-medium text-(--color-primary)">
                   {info.pickupTime}
                 </p>
                 {info.certRequired && (
-                  <p className="mt-1 text-xs text-[var(--color-warning)]">
+                  <p className="mt-1 text-xs text-(--color-warning)">
                     Requires: {info.certRequired}
                   </p>
                 )}
@@ -90,10 +93,10 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
         })}
       </div>
 
-      {/* Advanced Dive Certification Modal */}
-      {showCertWarning && (
-        <div className="rounded-lg border-2 border-[var(--color-warning)] bg-[var(--color-warning-light)] p-4">
-          <h3 className="font-semibold text-[var(--color-warning)]">
+      {/* Certification Check Modal */}
+      {showCertWarning && state.selectedItemId === CF_ITEMS.advanced2Tank && (
+        <div className="rounded-lg border-2 border-(--color-warning) bg-(--color-warning-light) p-4">
+          <h3 className="font-semibold text-(--color-warning)">
             Certification Check
           </h3>
           <p className="mt-1 text-sm">
@@ -114,10 +117,43 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
               variant="secondary"
               onClick={() => {
                 setShowCertWarning(false);
-                handleSelect(CF_ITEMS.classic2Tank);
+                handleSelect(CF_ITEMS.afternoonSnorkel);
               }}
             >
-              No &mdash; switch to Classic Dive
+              No &mdash; switch to Snorkeling
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {showCertWarning && (state.selectedItemId === CF_ITEMS.classic2Tank || state.selectedItemId === CF_ITEMS.afternoonDive) && (
+        <div className="rounded-lg border-2 border-(--color-warning) bg-(--color-warning-light) p-4">
+          <h3 className="font-semibold text-(--color-warning)">
+            Certification Check
+          </h3>
+          <p className="mt-1 text-sm">
+            {state.selectedItemId === CF_ITEMS.classic2Tank
+              ? "The Classic 2-Tank Dive"
+              : "The Afternoon 1-Tank Dive"}{" "}
+            requires <strong>Open Water certification</strong> (or Scuba Diver
+            certification with a private guide).
+          </p>
+          <p className="mt-2 text-sm">
+            Do all divers in your group hold a valid scuba certification?
+          </p>
+          <div className="mt-3 flex gap-3">
+            <Button size="sm" onClick={handleCertConfirm}>
+              Yes, we&apos;re certified
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setShowCertWarning(false);
+                handleSelect(CF_ITEMS.afternoonSnorkel);
+              }}
+            >
+              No &mdash; switch to Snorkeling
             </Button>
           </div>
         </div>
