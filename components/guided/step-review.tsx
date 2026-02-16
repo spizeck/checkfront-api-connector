@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { stripHtml } from "@/lib/utils";
 import { formatCfDate, inclusiveDaysBetween, parseCfDate } from "@/lib/date-range";
-import { ACTIVITY_INFO } from "@/lib/constants";
+import { ACTIVITY_INFO, CF_ITEMS } from "@/lib/constants";
 
 export function StepReview({ state, updateState, onNext, session }: StepProps) {
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         params.set("start_date", state.startDate);
         params.set("end_date", state.endDate);
         for (const [key, val] of Object.entries(state.params)) {
-          params.set(`param[${key}]`, String(val));
+          params.set(`param.${key}`, String(val));
         }
 
         const res = await fetch(
@@ -177,14 +177,22 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
               <span>{numDays} days</span>
             </div>
           )}
-          {Object.entries(state.params).map(([key, val]) => (
-            <div key={key} className="flex justify-between">
-              <span className="capitalize text-[var(--color-muted)]">
-                {key}
-              </span>
-              <span>{val}</span>
+          {Object.entries(state.params).map(([key, val]) => {
+            const paramLabel =
+              activityInfo?.params.find((p) => p.key === key)?.label || key;
+            return (
+              <div key={key} className="flex justify-between">
+                <span className="text-[var(--color-muted)]">{paramLabel}</span>
+                <span>{val}</span>
+              </div>
+            );
+          })}
+          {state.rentalGearCount > 0 && (
+            <div className="flex justify-between">
+              <span className="text-[var(--color-muted)]">Full Rental Gear</span>
+              <span>{state.rentalGearCount}</span>
             </div>
-          ))}
+          )}
         </div>
 
         {/* Pricing */}

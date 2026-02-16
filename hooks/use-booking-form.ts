@@ -19,6 +19,8 @@ export interface BookingFormState {
   sessionId: string | null;
   customerForm: Record<string, string>;
   invoiceUrl: string | null;
+  /** How many guests need full rental gear (dive activities only) */
+  rentalGearCount: number;
   /** Whether user confirmed advanced certification eligibility */
   certConfirmed: boolean;
 }
@@ -41,6 +43,7 @@ const initialState: BookingFormState = {
   sessionId: null,
   customerForm: {},
   invoiceUrl: null,
+  rentalGearCount: 0,
   certConfirmed: false,
 };
 

@@ -16,9 +16,11 @@ const ACTIVITIES = [
 
 export function StepActivity({ state, updateState, onNext }: StepProps) {
   const [showCertWarning, setShowCertWarning] = useState(false);
+  const [showDiscoverScuba, setShowDiscoverScuba] = useState(false);
 
   function handleSelect(itemId: number) {
     setShowCertWarning(false);
+    setShowDiscoverScuba(false);
     updateState({
       selectedItemId: itemId,
       // Reset downstream state when activity changes
@@ -117,10 +119,10 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
               variant="secondary"
               onClick={() => {
                 setShowCertWarning(false);
-                handleSelect(CF_ITEMS.afternoonSnorkel);
+                handleSelect(CF_ITEMS.classic2Tank);
               }}
             >
-              No &mdash; switch to Snorkeling
+              No &mdash; switch to Classic Dive
             </Button>
           </div>
         </div>
@@ -148,12 +150,50 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
             <Button
               size="sm"
               variant="secondary"
+              onClick={() => setShowDiscoverScuba(true)}
+            >
+              No &mdash; I&apos;m not certified
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {showDiscoverScuba && (
+        <div className="rounded-lg border-2 border-(--color-primary) bg-(--color-primary-light) p-4">
+          <h3 className="font-semibold text-(--color-primary)">
+            Discover Scuba Diving
+          </h3>
+          <p className="mt-1 text-sm">
+            No certification? No problem! Our <strong>Discover Scuba Dive</strong>{" "}
+            experience is a guided introduction to scuba diving &mdash; no prior
+            certification needed. An instructor will be with you the entire time.
+          </p>
+          <p className="mt-2 text-sm">
+            Would you like to learn more?
+          </p>
+          <div className="mt-3 flex gap-3">
+            <Button
+              size="sm"
               onClick={() => {
+                window.location.href =
+                  "/contact?subject=" +
+                  encodeURIComponent(
+                    "I'm interested in a Discover Scuba Dive"
+                  );
+              }}
+            >
+              Yes, tell me more!
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                setShowDiscoverScuba(false);
                 setShowCertWarning(false);
                 handleSelect(CF_ITEMS.afternoonSnorkel);
               }}
             >
-              No &mdash; switch to Snorkeling
+              No thanks &mdash; switch to Snorkeling
             </Button>
           </div>
         </div>

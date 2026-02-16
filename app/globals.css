@@ -32,7 +32,10 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 /* ──────────────────────────────────────────────
@@ -183,4 +186,143 @@ body {
   .prose-chat th {
     background: rgba(255, 255, 255, 0.05);
   }
+}
+
+/* ──────────────────────────────────────────────
+   react-day-picker v9 calendar overrides
+   ────────────────────────────────────────────── */
+.rdp-root {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: var(--color-primary-light);
+  --rdp-day_button-border-radius: 6px;
+  --rdp-range_start-date-background-color: var(--color-primary);
+  --rdp-range_end-date-background-color: var(--color-primary);
+  --rdp-range_middle-background-color: var(--color-primary-light);
+  --rdp-range_middle-color: var(--color-foreground);
+  --rdp-range_start-color: white;
+  --rdp-range_end-color: white;
+  --rdp-today-color: var(--color-primary);
+  --rdp-selected-border: 2px solid transparent;
+  color: var(--color-foreground);
+}
+
+/* Prevent the default bold+large on selected days */
+.rdp-selected {
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.rdp-month_caption {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.rdp-weekday {
+  color: var(--color-muted);
+}
+
+.rdp-day_button {
+  color: var(--color-foreground);
+  transition: background-color 0.15s;
+}
+
+.rdp-day_button:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+}
+
+.rdp-disabled .rdp-day_button {
+  opacity: 0.25;
+}
+
+.rdp-chevron {
+  fill: var(--color-primary);
+}
+
+.rdp-today:not(.rdp-outside) .rdp-day_button {
+  font-weight: 600;
+}
+
+.rdp-button_previous:hover,
+.rdp-button_next:hover {
+  background-color: var(--color-primary-light);
+}
+
+/* Range middle days: outline only, no fill */
+.rdp-range_middle .rdp-day_button,
+.custom-range-middle .rdp-day_button {
+  background-color: transparent !important;
+  border: 1px solid var(--color-primary) !important;
+  color: var(--color-foreground) !important;
+}
+
+/* Range start/end: colored pill with white text */
+.rdp-range_start .rdp-day_button,
+.rdp-range_end .rdp-day_button {
+  background-color: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .rdp-months {
+    flex-direction: column;
+  }
+}
+
+/* ---- DayPicker: outline-only selection (no shading) ---- */
+
+/* 1) Kill the default selected fill */
+.rdp-day_selected,
+.rdp-day_range_start,
+.rdp-day_range_middle,
+.rdp-day_range_end {
+  background: transparent !important;
+}
+
+/* 2) Make sure the "button" inside the day has no fill */
+.rdp-day_selected .rdp-day_button,
+.rdp-day_range_start .rdp-day_button,
+.rdp-day_range_middle .rdp-day_button,
+.rdp-day_range_end .rdp-day_button {
+  background: transparent !important;
+  color: var(--color-foreground) !important;
+}
+
+/* 3) The pill outline: middle days only get top+bottom border */
+.rdp-day_range_middle .rdp-day_button {
+  border-top: 2px solid var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+}
+
+/* 4) Start day: full border, but no right border so it connects */
+.rdp-day_range_start .rdp-day_button {
+  border: 2px solid var(--color-primary);
+  border-right: 0;
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px;
+}
+
+/* 5) End day: full border, but no left border so it connects */
+.rdp-day_range_end .rdp-day_button {
+  border: 2px solid var(--color-primary);
+  border-left: 0;
+  border-top-right-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+}
+
+/* 6) Single-day selection (start == end): full rounded outline */
+.rdp-day_range_start.rdp-day_range_end .rdp-day_button,
+.rdp-day_selected .rdp-day_button {
+  border: 2px solid var(--color-primary);
+  border-radius: 9999px;
+}
+
+/* Optional: make focus look nice without weird outlines */
+.rdp-day_button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary);
 }

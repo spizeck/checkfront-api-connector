@@ -37,6 +37,7 @@ export const CF_ITEMS = {
   afternoonSnorkel: 12,
   sunsetCruise: 194,
   rentalGear: 176,
+  marineParkFee: 68,
 } as const;
 
 // ---- Activity param & config types ----
@@ -115,6 +116,15 @@ export const ACTIVITY_INFO: Record<number, ActivityConfig> = {
     pickupTime: "Same as dive",
     params: [
       { key: "fullrentalgear", label: "Full Rental Gear" },
+    ],
+  },
+    [CF_ITEMS.marineParkFee]: {
+    name: "Marine Park Fee",
+    shortDesc: "$3 per dive goes to support Saba's marine park, $1 per dive goes to support the Hyperbaric Chamber",
+    pickupTime: "Same as dive",
+    params: [
+      { key: "diver2023rate", label: "Diver" },
+      { key: "snorkeler", label: "Snorkeler" },
     ],
   },
 };
