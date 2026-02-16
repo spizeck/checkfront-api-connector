@@ -16,7 +16,7 @@ const variantClasses: Record<Variant, string> = {
   ghost:
     "bg-transparent hover:bg-[var(--color-primary-light)] focus:ring-[var(--color-primary)]",
   destructive:
-    "bg-[var(--color-error)] text-white hover:bg-red-700 focus:ring-[var(--color-error)]",
+    "bg-[var(--color-error)] text-white hover:opacity-90 focus:ring-[var(--color-error)]",
 };
 
 const sizeClasses: Record<Size, string> = {

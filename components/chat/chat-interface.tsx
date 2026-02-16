@@ -31,11 +31,10 @@ export function ChatInterface({
       <div className="flex-1 overflow-y-auto" role="log" aria-live="polite">
         {messages.length === 0 && (
           <div className="flex flex-col items-center gap-4 py-16 text-center">
-            <div className="text-4xl">💬</div>
             <h2 className="text-xl font-semibold">Booking Assistant</h2>
             <p className="max-w-md text-[var(--color-muted)]">
-              Hi! I can help you find and book activities. Tell me what
-              you&apos;re looking for, or ask me to show available categories.
+              I can help you find and book activities. Tell me what
+              you&apos;re looking for, or ask about our available options.
             </p>
           </div>
         )}
