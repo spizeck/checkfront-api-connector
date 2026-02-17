@@ -81,7 +81,8 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
       // Reset rated data when params change
       ratedItem: null,
       selectedSlip: null,
-      sessionId: null,
+      // Only reset sessionId if we don't have one (preserve for multi-activity bookings)
+      ...(state.sessionId ? {} : { sessionId: null }),
     });
     onNext();
   }

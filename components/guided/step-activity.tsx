@@ -26,7 +26,8 @@ export function StepActivity({ state, updateState, onNext }: StepProps) {
       // Reset downstream state when activity changes
       ratedItem: null,
       selectedSlip: null,
-      sessionId: null,
+      // Only reset sessionId if we don't have one (preserve for multi-activity bookings)
+      ...(state.sessionId ? {} : { sessionId: null }),
       certConfirmed: false,
     });
   }

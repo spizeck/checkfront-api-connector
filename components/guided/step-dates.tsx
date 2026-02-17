@@ -82,7 +82,8 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
       // Reset rated data when dates change
       ratedItem: null,
       selectedSlip: null,
-      sessionId: null,
+      // Only reset sessionId if we don't have one (preserve for multi-activity bookings)
+      ...(state.sessionId ? {} : { sessionId: null }),
     });
     onNext();
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useBookingForm, type BookingFormState } from "@/hooks/use-booking-form";
 import { useBookingSession } from "@/hooks/use-booking-session";
 import { Stepper } from "@/components/ui/stepper";
@@ -32,6 +33,11 @@ export default function GuidedBookingPage() {
   const { state, nextStep, prevStep, updateState, isFirstStep, resetForm } =
     useBookingForm();
   const session = useBookingSession();
+
+  // Clear any existing session when the page first loads
+  useEffect(() => {
+    session.clearSession();
+  }, []);
 
   const StepComponent = STEP_COMPONENTS[state.currentStep];
 
