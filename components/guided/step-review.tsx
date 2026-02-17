@@ -15,7 +15,7 @@ import {
 } from "@/lib/date-range";
 import { ACTIVITY_INFO, CF_ITEMS, BOOKING_STEPS } from "@/lib/constants";
 
-export function StepReview({ state, updateState, onNext, session }: StepProps) {
+export function StepReview({ state, updateState, onNext, session, refreshCart }: StepProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ratedItem, setRatedItem] = useState<CheckfrontItem | null>(
@@ -239,6 +239,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
 
       updateState({ sessionId });
       setItemAddedToCart(true);
+      refreshCart?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add to cart. Please try again.");
     } finally {
@@ -327,6 +328,9 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
           }
         }
       }
+
+      // Notify parent to refresh cart header
+      refreshCart?.();
 
       // Reset to activity selection with session preserved
       const activityIndex = BOOKING_STEPS.indexOf("activity");
@@ -571,7 +575,26 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            onClick={() => setAddAnotherDialog(true)}
+            onClick={() => {
+              if (itemAddedToCart) {
+                // Already in cart — skip dialog, go straight to activity selection
+                const activityIndex = BOOKING_STEPS.indexOf("activity");
+                updateState({
+                  sessionId: state.sessionId,
+                  currentStep: activityIndex !== -1 ? BOOKING_STEPS[activityIndex] : state.currentStep,
+                  selectedItemId: null,
+                  startDate: null,
+                  endDate: null,
+                  params: {},
+                  ratedItem: null,
+                  selectedSlip: null,
+                  rentalGearCount: 0,
+                  certConfirmed: false,
+                });
+              } else {
+                setAddAnotherDialog(true);
+              }
+            }}
             disabled={submitting || isUnavailable || !state.selectedSlip}
           >
             Add Another Activity

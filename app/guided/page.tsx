@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useBookingForm, type BookingFormState } from "@/hooks/use-booking-form";
 import { useBookingSession } from "@/hooks/use-booking-session";
 import { Stepper } from "@/components/ui/stepper";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { StepActivity } from "@/components/guided/step-activity";
 import { StepDates } from "@/components/guided/step-dates";
 import { StepGuests } from "@/components/guided/step-guests";
@@ -14,13 +13,23 @@ import { StepDetails } from "@/components/guided/step-customer";
 import { StepCheckout } from "@/components/guided/step-confirm";
 import { CartModal } from "@/components/guided/cart-modal";
 import { SessionTimer } from "@/components/guided/session-timer";
-import type { BookingStep } from "@/lib/constants";
+import { CF_ITEMS, type BookingStep } from "@/lib/constants";
+
+const MAIN_ACTIVITY_IDS = [
+  CF_ITEMS.advanced2Tank,
+  CF_ITEMS.classic2Tank,
+  CF_ITEMS.afternoonDive,
+  CF_ITEMS.afternoonSnorkel,
+  CF_ITEMS.sunsetCruise,
+];
 
 export interface StepProps {
   state: BookingFormState;
   updateState: (payload: Partial<BookingFormState>) => void;
   onNext: () => void;
   session: ReturnType<typeof useBookingSession>;
+  /** Call after adding items to cart so the page header refreshes count/total */
+  refreshCart?: () => void;
 }
 
 const STEP_COMPONENTS: Record<BookingStep, React.ComponentType<StepProps>> = {
@@ -39,6 +48,12 @@ export default function GuidedBookingPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [cartTotal, setCartTotal] = useState<string>('');
+  // Bump this counter to force a cart info re-fetch (e.g. after adding items)
+  const [cartRefreshKey, setCartRefreshKey] = useState(0);
+
+  const refreshCart = useCallback(() => {
+    setCartRefreshKey((k) => k + 1);
+  }, []);
 
   // Load session from URL parameter if present
   useEffect(() => {
@@ -49,7 +64,7 @@ export default function GuidedBookingPage() {
     }
   }, []);
 
-  // Fetch cart count and total when session changes
+  // Fetch cart count and total when session changes OR refreshCart is called
   useEffect(() => {
     async function fetchCartInfo() {
       if (!state.sessionId) {
@@ -62,14 +77,23 @@ export default function GuidedBookingPage() {
         const response = await fetch('/api/session');
         if (response.ok) {
           const data = await response.json();
-          const mainActivityIds = [5, 133, 11, 12, 194];
-          const count = Object.values(data.booking.session.item || {}).filter(
+          const items = Object.values(data.booking?.session?.item || {});
+          const count = items.filter(
             (item: any) =>
-              mainActivityIds.includes(item.item_id) &&
+              MAIN_ACTIVITY_IDS.includes(item.item_id) &&
               parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
           ).length;
           setCartCount(count);
-          setCartTotal(data.booking.session.total || '');
+          setCartTotal(data.booking?.session?.total || '');
+
+          // If the session has no real items left, clean up
+          if (count === 0) {
+            setCartCount(0);
+            setCartTotal('');
+          }
+        } else if (response.status === 404) {
+          setCartCount(0);
+          setCartTotal('');
         }
       } catch (err) {
         // Ignore errors
@@ -77,7 +101,7 @@ export default function GuidedBookingPage() {
     }
 
     fetchCartInfo();
-  }, [state.sessionId]);
+  }, [state.sessionId, cartRefreshKey]);
 
   const StepComponent = STEP_COMPONENTS[state.currentStep];
 
@@ -108,6 +132,7 @@ export default function GuidedBookingPage() {
           updateState={updateState}
           onNext={nextStep}
           session={session}
+          refreshCart={refreshCart}
         />
       </div>
 
@@ -141,40 +166,14 @@ export default function GuidedBookingPage() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         sessionId={state.sessionId}
-        onRefresh={() => {
-          // Refresh cart count and handle empty cart
-          if (state.sessionId) {
-            fetch('/api/session')
-              .then(res => {
-                if (!res.ok) throw new Error('Cart is empty');
-                return res.json();
-              })
-              .then(data => {
-                const mainActivityIds = [5, 133, 11, 12, 194];
-                const items = data.booking?.session?.item || {};
-                const count = Object.values(items).filter(
-                  (item: any) =>
-                    mainActivityIds.includes(item.item_id) &&
-                    parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
-                ).length;
-                setCartCount(count);
-                setCartTotal(data.booking?.session?.total || '');
-                
-                // If cart is empty, clear session
-                if (count === 0) {
-                  updateState({ sessionId: null });
-                  setIsCartOpen(false);
-                }
-              })
-              .catch(() => {
-                // Cart is empty or error occurred
-                setCartCount(0);
-                setCartTotal('');
-                updateState({ sessionId: null });
-                setIsCartOpen(false);
-              });
-          }
+        onCartEmpty={() => {
+          // Session has no items left — clear everything
+          updateState({ sessionId: null });
+          setCartCount(0);
+          setCartTotal('');
+          setIsCartOpen(false);
         }}
+        onRefresh={refreshCart}
       />
     </div>
   );
