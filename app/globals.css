@@ -41,16 +41,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #0B0F3B;   /* Abyss Navy */
-    --color-surface: #131845;      /* Slightly lighter navy for cards */
+    --color-background: #0F1324;   /* Deep slate-navy */
+    --color-surface: #1A2133;      /* Neutral slate surface to reduce blue cast */
     --color-foreground: #E8E9F5;
     --color-muted: #9CA3AF;
-    --color-border: #2A2F5A;
-    --color-primary-light: #1A2060;
+    --color-border: #353E54;
+    --color-primary-light: #222B44;
     --color-success-light: #1A3A33;
     --color-warning-light: #3A2E10;
     --color-error-light: #3A1520;
   }
+}
+
+/* Keep guided booking embed light regardless of host/system dark preference */
+.guided-embed-light {
+  --color-background: #F5F6FA;
+  --color-surface: #FFFFFF;
+  --color-foreground: #1A1A2E;
+  --color-muted: #6B7280;
+  --color-border: #D9DBE4;
+  --color-primary-light: #E8E9F5;
+  --color-success-light: #E0F2EE;
+  --color-warning-light: #FBF3DE;
+  --color-error-light: #F5E1E4;
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
 /* ──────────────────────────────────────────────

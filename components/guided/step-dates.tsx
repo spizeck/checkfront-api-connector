@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format, startOfDay, addMonths } from "date-fns";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, type DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import type { StepProps } from "@/app/guided/page";
 import { Button } from "@/components/ui/button";
@@ -41,27 +41,26 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
     state.selectedItemId === CF_ITEMS.afternoonSnorkel ||
     state.selectedItemId === CF_ITEMS.afternoonDive;
 
-  function handleDayClick(day: Date) {
-    if (isSingleDayItem) {
-      setStartDate(day);
-      setEndDate(day);
+  function handleSingleSelect(day: Date | undefined) {
+    if (!day) return;
+    const normalizedDay = startOfDay(day);
+    setStartDate(normalizedDay);
+    setEndDate(normalizedDay);
+    setError(null);
+  }
+
+  function handleRangeSelect(range: DateRange | undefined) {
+    if (!range?.from) {
+      setStartDate(undefined);
+      setEndDate(undefined);
       return;
     }
 
-    // Range selection logic
-    if (!startDate || (startDate && endDate)) {
-      // Start a new range
-      setStartDate(day);
-      setEndDate(undefined);
-    } else {
-      // Complete the range
-      if (day < startDate) {
-        setEndDate(startDate);
-        setStartDate(day);
-      } else {
-        setEndDate(day);
-      }
-    }
+    const from = startOfDay(range.from);
+    const to = range.to ? startOfDay(range.to) : undefined;
+    setStartDate(from);
+    setEndDate(to);
+    setError(null);
   }
 
   function handleNext() {
@@ -111,16 +110,29 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
       </div>
 
       <div className="flex justify-center">
-        <DayPicker
-          mode="range"
-          selected={selectedRange}
-          onDayClick={handleDayClick}
-          disabled={{ before: today }}
-          startMonth={today}
-          endMonth={addMonths(today, 12)}
-          numberOfMonths={2}
-          style={{ fontSize: "0.95rem" }}
-        />
+        {isSingleDayItem ? (
+          <DayPicker
+            mode="single"
+            selected={startDate}
+            onSelect={handleSingleSelect}
+            disabled={{ before: today }}
+            startMonth={today}
+            endMonth={addMonths(today, 12)}
+            numberOfMonths={2}
+            style={{ fontSize: "0.95rem" }}
+          />
+        ) : (
+          <DayPicker
+            mode="range"
+            selected={selectedRange}
+            onSelect={handleRangeSelect}
+            disabled={{ before: today }}
+            startMonth={today}
+            endMonth={addMonths(today, 12)}
+            numberOfMonths={2}
+            style={{ fontSize: "0.95rem" }}
+          />
+        )}
       </div>
 
       {/* Selection summary */}
@@ -146,10 +158,10 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
                 <span className="text-[var(--color-muted)]">Duration</span>
                 <span className="font-medium">
                   {numDays} day{numDays === 1 ? "" : "s"} of diving
-                  {numDays === 2 && " — ~5% multi-day discount"}
+                  {numDays === 2 && " ~5% multi-day discount"}
                   {(numDays === 3 || numDays === 4) &&
-                    " — ~10% multi-day discount"}
-                  {numDays >= 5 && " — ~15% multi-day discount"}
+                    " ~10% multi-day discount"}
+                  {numDays >= 5 && " ~15% multi-day discount"}
                 </span>
               </div>
             </>

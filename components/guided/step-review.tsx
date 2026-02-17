@@ -7,7 +7,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { stripHtml } from "@/lib/utils";
-import { formatCfDate, inclusiveDaysBetween, parseCfDate } from "@/lib/date-range";
+import {
+  formatCfDate,
+  inclusiveDaysBetween,
+  parseCfDate,
+} from "@/lib/date-range";
 import { ACTIVITY_INFO, CF_ITEMS } from "@/lib/constants";
 
 export function StepReview({ state, updateState, onNext, session }: StepProps) {
@@ -62,9 +66,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
           selectedSlip: item.rate?.slip || null,
         });
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load pricing",
-        );
+        setError(err instanceof Error ? err.message : "Failed to load pricing");
       } finally {
         setLoading(false);
       }
@@ -189,7 +191,9 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
           })}
           {state.rentalGearCount > 0 && (
             <div className="flex justify-between">
-              <span className="text-[var(--color-muted)]">Full Rental Gear</span>
+              <span className="text-[var(--color-muted)]">
+                Full Rental Gear
+              </span>
               <span>{state.rentalGearCount}</span>
             </div>
           )}
@@ -204,11 +208,6 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
                 {ratedItem.rate.summary?.price?.total || "Price on request"}
               </span>
             </div>
-            {ratedItem.rate.summary?.price?.unit && (
-              <p className="mt-1 text-right text-xs text-[var(--color-muted)]">
-                {ratedItem.rate.summary.price.unit}
-              </p>
-            )}
           </div>
         )}
 

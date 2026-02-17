@@ -36,7 +36,8 @@ export default function GuidedBookingPage() {
   const StepComponent = STEP_COMPONENTS[state.currentStep];
 
   return (
-    <div className="flex flex-col gap-8 py-6">
+    <div className="guided-embed-light rounded-xl border border-(--color-border) bg-(--color-background) p-6 text-(--color-foreground)">
+      <div className="flex flex-col gap-8">
       <Stepper currentStep={state.currentStep} />
 
       <div className="min-h-400px">
@@ -71,6 +72,7 @@ export default function GuidedBookingPage() {
           {session.error}
         </div>
       )}
+      </div>
     </div>
   );
 }
