@@ -17,6 +17,7 @@ export function CartModal({ isOpen, onClose, sessionId, onRefresh }: CartModalPr
   const [cartData, setCartData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [removingIndex, setRemovingIndex] = useState<number | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     itemName: string;
@@ -83,13 +84,18 @@ export function CartModal({ isOpen, onClose, sessionId, onRefresh }: CartModalPr
       const marineParkFee = associatedItems.find((item: any) => item.item_id === CF_ITEMS.marineParkFee) as any;
 
       const itemsToRemove = [mainItem.slip];
-      if (rentalGear) itemsToRemove.push(rentalGear.slip);
-      if (marineParkFee) itemsToRemove.push(marineParkFee.slip);
+      if (rentalGear && rentalGear.slip) itemsToRemove.push(rentalGear.slip);
+      if (marineParkFee && marineParkFee.slip) itemsToRemove.push(marineParkFee.slip);
       
       const alterParams: Record<string, string> = {};
       itemsToRemove.forEach(slip => {
-        alterParams[slip] = '0';
+        if (slip) alterParams[slip] = '0';
       });
+      
+      if (Object.keys(alterParams).length === 0) {
+        console.error('No valid items to remove');
+        return;
+      }
       
       const response = await fetch('/api/session', {
         method: 'POST',
@@ -101,16 +107,39 @@ export function CartModal({ isOpen, onClose, sessionId, onRefresh }: CartModalPr
       });
       
       if (response.ok) {
+        // Wait a moment for the session to update
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
         // Refresh cart data
         const refreshResponse = await fetch('/api/session');
         if (refreshResponse.ok) {
           const sessionData = await refreshResponse.json();
-          setCartData(sessionData.booking.session);
+          const hasItems = sessionData.booking?.session?.item && 
+                          Object.keys(sessionData.booking.session.item).length > 0;
+          
+          if (hasItems) {
+            setCartData(sessionData.booking.session);
+          } else {
+            // Cart is now empty - close modal after a brief delay
+            setCartData(null);
+            setTimeout(() => {
+              onClose();
+            }, 500);
+          }
         } else {
-          // Cart might be empty now
+          // Cart might be empty now - close modal
           setCartData(null);
+          setTimeout(() => {
+            onClose();
+          }, 500);
         }
+        
+        // Trigger parent refresh
         if (onRefresh) onRefresh();
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to remove item' }));
+        console.error('Failed to remove item:', errorData);
+        alert('Failed to remove item. Please try again.');
       }
     } catch (err) {
       console.error('Failed to remove item:', err);
