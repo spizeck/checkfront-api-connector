@@ -33,6 +33,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
     message: string;
     onConfirm: () => void;
   }>({ isOpen: false, title: "", message: "", onConfirm: () => {} });
+  const [addAnotherDialog, setAddAnotherDialog] = useState(false);
 
   const activityInfo = state.selectedItemId
     ? ACTIVITY_INFO[state.selectedItemId]
@@ -245,6 +246,126 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
     }
   }
 
+  async function addToCartAndSelectAnother() {
+    if (!state.selectedSlip) return;
+
+    setSubmitting(true);
+    setAddAnotherDialog(false);
+    
+    try {
+      const result = await session.createSession(
+        state.selectedSlip,
+        state.sessionId || undefined,
+      );
+      
+      if (!result) {
+        setError("Failed to add to cart. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      const sessionId = result.booking.session.id;
+
+      // Add rental gear if needed
+      const isDiveActivity = state.selectedItemId && (
+        state.selectedItemId === CF_ITEMS.advanced2Tank ||
+        state.selectedItemId === CF_ITEMS.classic2Tank ||
+        state.selectedItemId === CF_ITEMS.afternoonDive
+      );
+
+      if (isDiveActivity && state.rentalGearCount > 0 && state.startDate && state.endDate) {
+        const rentalParams = new URLSearchParams();
+        rentalParams.set("start_date", state.startDate);
+        rentalParams.set("end_date", state.endDate);
+        rentalParams.set("param.fullrentalgear", String(state.rentalGearCount));
+
+        const rentalRes = await fetch(
+          `/api/items/${CF_ITEMS.rentalGear}?${rentalParams.toString()}`,
+        );
+        
+        if (rentalRes.ok) {
+          const rentalData = await rentalRes.json();
+          const rentalSlip = rentalData.item?.rate?.slip;
+          
+          if (rentalSlip) {
+            await session.createSession(rentalSlip, sessionId);
+          }
+        }
+      }
+
+      // Add marine park fees if needed
+      const needsMarineParkFee = state.selectedItemId && (
+        state.selectedItemId === CF_ITEMS.advanced2Tank ||
+        state.selectedItemId === CF_ITEMS.classic2Tank ||
+        state.selectedItemId === CF_ITEMS.afternoonDive ||
+        state.selectedItemId === CF_ITEMS.afternoonSnorkel
+      );
+
+      if (needsMarineParkFee && state.startDate && state.endDate) {
+        const totalGuests = Object.values(state.params).reduce((sum, val) => sum + val, 0);
+        
+        if (totalGuests > 0) {
+          const feeParams = new URLSearchParams();
+          feeParams.set("start_date", state.startDate);
+          feeParams.set("end_date", state.endDate);
+          
+          const isSnorkel = state.selectedItemId === CF_ITEMS.afternoonSnorkel;
+          const paramKey = isSnorkel ? "snorkeler" : "diver2023rate";
+          feeParams.set(`param.${paramKey}`, String(totalGuests));
+
+          const feeRes = await fetch(
+            `/api/items/${CF_ITEMS.marineParkFee}?${feeParams.toString()}`,
+          );
+          
+          if (feeRes.ok) {
+            const feeData = await feeRes.json();
+            const feeSlip = feeData.item?.rate?.slip;
+            
+            if (feeSlip) {
+              await session.createSession(feeSlip, sessionId);
+            }
+          }
+        }
+      }
+
+      // Reset to activity selection with session preserved
+      const activityIndex = BOOKING_STEPS.indexOf("activity");
+      updateState({
+        sessionId,
+        currentStep: activityIndex !== -1 ? BOOKING_STEPS[activityIndex] : state.currentStep,
+        selectedItemId: null,
+        startDate: null,
+        endDate: null,
+        params: {},
+        ratedItem: null,
+        selectedSlip: null,
+        rentalGearCount: 0,
+        certConfirmed: false,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to add activity");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function skipAndSelectAnother() {
+    setAddAnotherDialog(false);
+    // Reset to activity selection without adding to cart
+    const activityIndex = BOOKING_STEPS.indexOf("activity");
+    updateState({
+      currentStep: activityIndex !== -1 ? BOOKING_STEPS[activityIndex] : state.currentStep,
+      selectedItemId: null,
+      startDate: null,
+      endDate: null,
+      params: {},
+      ratedItem: null,
+      selectedSlip: null,
+      rentalGearCount: 0,
+      certConfirmed: false,
+    });
+  }
+
   function proceedToDetails() {
     onNext();
   }
@@ -450,107 +571,11 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            onClick={async () => {
-            // Add current activity to session first
-            if (state.selectedSlip) {
-              setSubmitting(true);
-              try {
-                const result = await session.createSession(
-                  state.selectedSlip,
-                  state.sessionId || undefined,
-                );
-                
-                if (result) {
-                  const sessionId = result.booking.session.id;
-
-                  // Add rental gear if needed
-                  const isDiveActivity = state.selectedItemId && (
-                    state.selectedItemId === CF_ITEMS.advanced2Tank ||
-                    state.selectedItemId === CF_ITEMS.classic2Tank ||
-                    state.selectedItemId === CF_ITEMS.afternoonDive
-                  );
-
-                  if (isDiveActivity && state.rentalGearCount > 0 && state.startDate && state.endDate) {
-                    const rentalParams = new URLSearchParams();
-                    rentalParams.set("start_date", state.startDate);
-                    rentalParams.set("end_date", state.endDate);
-                    rentalParams.set("param.fullrentalgear", String(state.rentalGearCount));
-
-                    const rentalRes = await fetch(
-                      `/api/items/${CF_ITEMS.rentalGear}?${rentalParams.toString()}`,
-                    );
-                    
-                    if (rentalRes.ok) {
-                      const rentalData = await rentalRes.json();
-                      const rentalSlip = rentalData.item?.rate?.slip;
-                      
-                      if (rentalSlip) {
-                        await session.createSession(rentalSlip, sessionId);
-                      }
-                    }
-                  }
-
-                  // Add marine park fees if needed
-                  const needsMarineParkFee = state.selectedItemId && (
-                    state.selectedItemId === CF_ITEMS.advanced2Tank ||
-                    state.selectedItemId === CF_ITEMS.classic2Tank ||
-                    state.selectedItemId === CF_ITEMS.afternoonDive ||
-                    state.selectedItemId === CF_ITEMS.afternoonSnorkel
-                  );
-
-                  if (needsMarineParkFee && state.startDate && state.endDate) {
-                    const totalGuests = Object.values(state.params).reduce((sum, val) => sum + val, 0);
-                    
-                    if (totalGuests > 0) {
-                      const feeParams = new URLSearchParams();
-                      feeParams.set("start_date", state.startDate);
-                      feeParams.set("end_date", state.endDate);
-                      
-                      const isSnorkel = state.selectedItemId === CF_ITEMS.afternoonSnorkel;
-                      const paramKey = isSnorkel ? "snorkeler" : "diver2023rate";
-                      feeParams.set(`param.${paramKey}`, String(totalGuests));
-
-                      const feeRes = await fetch(
-                        `/api/items/${CF_ITEMS.marineParkFee}?${feeParams.toString()}`,
-                      );
-                      
-                      if (feeRes.ok) {
-                        const feeData = await feeRes.json();
-                        const feeSlip = feeData.item?.rate?.slip;
-                        
-                        if (feeSlip) {
-                          await session.createSession(feeSlip, sessionId);
-                        }
-                      }
-                    }
-                  }
-
-                  // Reset to activity selection with session preserved
-                  const activityIndex = BOOKING_STEPS.indexOf("activity");
-                  updateState({
-                    sessionId,
-                    currentStep: activityIndex !== -1 ? BOOKING_STEPS[activityIndex] : state.currentStep,
-                    selectedItemId: null,
-                    startDate: null,
-                    endDate: null,
-                    params: {},
-                    ratedItem: null,
-                    selectedSlip: null,
-                    rentalGearCount: 0,
-                    certConfirmed: false,
-                  });
-                }
-              } catch (err) {
-                setError(err instanceof Error ? err.message : "Failed to add activity");
-              } finally {
-                setSubmitting(false);
-              }
-            }
-          }}
-          disabled={submitting || isUnavailable || !state.selectedSlip}
-        >
-          Add Another Activity
-        </Button>
+            onClick={() => setAddAnotherDialog(true)}
+            disabled={submitting || isUnavailable || !state.selectedSlip}
+          >
+            Add Another Activity
+          </Button>
 
           <Button
             onClick={itemAddedToCart ? proceedToDetails : addToCart}
@@ -561,9 +586,11 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
                 <Spinner size="sm" /> Adding to cart...
               </span>
             ) : itemAddedToCart ? (
-              "Next: Your Details"
+              <span className="flex items-center gap-2">
+                ✓ Next: Your Details
+              </span>
             ) : (
-              "Add to Cart"
+              "Add to Cart & Continue"
             )}
           </Button>
         </div>
@@ -597,6 +624,30 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         onConfirm={confirmDialog.onConfirm}
         onCancel={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
       />
+
+      {/* Add Another Activity Dialog */}
+      {addAnotherDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setAddAnotherDialog(false)} />
+          <div className="relative z-10 w-full max-w-md rounded-lg border border-(--color-border) bg-(--color-background) p-6 shadow-lg">
+            <h3 className="text-lg font-semibold">Add Activity to Cart?</h3>
+            <p className="mt-2 text-sm text-(--color-muted)">
+              Would you like to add <strong>{activityInfo?.name || ratedItem?.name}</strong> to your cart before selecting another activity?
+            </p>
+            <div className="mt-6 flex flex-col gap-2">
+              <Button onClick={addToCartAndSelectAnother} disabled={submitting}>
+                {submitting ? "Adding..." : "Yes, Add to Cart"}
+              </Button>
+              <Button variant="secondary" onClick={skipAndSelectAnother} disabled={submitting}>
+                No, Skip This Activity
+              </Button>
+              <Button variant="ghost" onClick={() => setAddAnotherDialog(false)} disabled={submitting}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

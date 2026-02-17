@@ -40,16 +40,13 @@ export default function GuidedBookingPage() {
   const [cartCount, setCartCount] = useState(0);
   const [cartTotal, setCartTotal] = useState<string>('');
 
-  // Clear any existing session when the page first loads
+  // Load session from URL parameter if present
   useEffect(() => {
-    async function clearExistingSession() {
-      try {
-        await session.clearSession();
-      } catch (err) {
-        // No active session to clear, which is fine for fresh page loads
-      }
+    const params = new URLSearchParams(window.location.search);
+    const sessionParam = params.get('session');
+    if (sessionParam && !state.sessionId) {
+      updateState({ sessionId: sessionParam });
     }
-    clearExistingSession();
   }, []);
 
   // Fetch cart count and total when session changes
@@ -145,20 +142,37 @@ export default function GuidedBookingPage() {
         onClose={() => setIsCartOpen(false)}
         sessionId={state.sessionId}
         onRefresh={() => {
-          // Refresh cart count
+          // Refresh cart count and handle empty cart
           if (state.sessionId) {
             fetch('/api/session')
-              .then(res => res.json())
+              .then(res => {
+                if (!res.ok) throw new Error('Cart is empty');
+                return res.json();
+              })
               .then(data => {
                 const mainActivityIds = [5, 133, 11, 12, 194];
-                const count = Object.values(data.booking.session.item || {}).filter(
+                const items = data.booking?.session?.item || {};
+                const count = Object.values(items).filter(
                   (item: any) =>
                     mainActivityIds.includes(item.item_id) &&
                     parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
                 ).length;
                 setCartCount(count);
+                setCartTotal(data.booking?.session?.total || '');
+                
+                // If cart is empty, clear session
+                if (count === 0) {
+                  updateState({ sessionId: null });
+                  setIsCartOpen(false);
+                }
               })
-              .catch(() => {});
+              .catch(() => {
+                // Cart is empty or error occurred
+                setCartCount(0);
+                setCartTotal('');
+                updateState({ sessionId: null });
+                setIsCartOpen(false);
+              });
           }
         }}
       />
