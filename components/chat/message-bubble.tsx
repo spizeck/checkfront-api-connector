@@ -17,8 +17,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={`max-w-[80%] space-y-2 rounded-lg px-4 py-3 ${
           isUser
-            ? "bg-[var(--color-primary)] text-white"
-            : "bg-[var(--color-border)]"
+            ? "bg-(--color-primary) text-white"
+            : "bg-(--color-border)"
         }`}
       >
         {message.parts.map((part, index) => {
@@ -71,7 +71,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               return (
                 <div
                   key={toolPart.toolCallId}
-                  className="text-xs italic text-[var(--color-muted)]"
+                  className="text-xs italic text-(--color-muted)"
                 >
                   Searching...
                 </div>

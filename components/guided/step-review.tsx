@@ -101,7 +101,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-20">
         <Spinner size="lg" />
-        <p className="text-sm text-[var(--color-muted)]">
+        <p className="text-sm text-(--color-muted)">
           Checking availability and pricing...
         </p>
       </div>
@@ -111,7 +111,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
   if (error && !ratedItem) {
     return (
       <div className="py-12 text-center">
-        <p className="text-[var(--color-error)]">{error}</p>
+        <p className="text-(--color-error)">{error}</p>
       </div>
     );
   }
@@ -132,21 +132,21 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">Review & Confirm Pricing</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Verify the details and pricing below, then continue to enter your
           details
         </p>
       </div>
 
       {/* Booking Summary Card */}
-      <div className="rounded-lg border border-[var(--color-border)] p-5">
+      <div className="rounded-lg border border-(--color-border) p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold">
               {activityInfo?.name || ratedItem?.name}
             </h3>
             {ratedItem?.summary && (
-              <p className="mt-1 text-sm text-[var(--color-muted)]">
+              <p className="mt-1 text-sm text-(--color-muted)">
                 {stripHtml(ratedItem.summary)}
               </p>
             )}
@@ -161,7 +161,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         <div className="mt-4 grid gap-2 text-sm">
           {state.startDate && (
             <div className="flex justify-between">
-              <span className="text-[var(--color-muted)]">
+              <span className="text-(--color-muted)">
                 {numDays === 1 ? "Date" : "Start Date"}
               </span>
               <span>{formatCfDate(state.startDate)}</span>
@@ -169,13 +169,13 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
           )}
           {state.endDate && numDays > 1 && (
             <div className="flex justify-between">
-              <span className="text-[var(--color-muted)]">End Date</span>
+              <span className="text-(--color-muted)">End Date</span>
               <span>{formatCfDate(state.endDate)}</span>
             </div>
           )}
           {numDays > 1 && (
             <div className="flex justify-between">
-              <span className="text-[var(--color-muted)]">Duration</span>
+              <span className="text-(--color-muted)">Duration</span>
               <span>{numDays} days</span>
             </div>
           )}
@@ -184,14 +184,14 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
               activityInfo?.params.find((p) => p.key === key)?.label || key;
             return (
               <div key={key} className="flex justify-between">
-                <span className="text-[var(--color-muted)]">{paramLabel}</span>
+                <span className="text-(--color-muted)">{paramLabel}</span>
                 <span>{val}</span>
               </div>
             );
           })}
           {state.rentalGearCount > 0 && (
             <div className="flex justify-between">
-              <span className="text-[var(--color-muted)]">
+              <span className="text-(--color-muted)">
                 Full Rental Gear
               </span>
               <span>{state.rentalGearCount}</span>
@@ -201,9 +201,9 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
 
         {/* Pricing */}
         {ratedItem?.rate && !isUnavailable && (
-          <div className="mt-4 border-t border-[var(--color-border)] pt-4">
+          <div className="mt-4 border-t border-(--color-border) pt-4">
             <div className="flex items-baseline justify-between">
-              <span className="text-[var(--color-muted)]">Total Price</span>
+              <span className="text-(--color-muted)">Total Price</span>
               <span className="text-2xl font-bold">
                 {ratedItem.rate.summary?.price?.total || "Price on request"}
               </span>
@@ -212,8 +212,8 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
         )}
 
         {isUnavailable && (
-          <div className="mt-4 border-t border-[var(--color-border)] pt-4">
-            <p className="text-sm text-[var(--color-error)]">
+          <div className="mt-4 border-t border-(--color-border) pt-4">
+            <p className="text-sm text-(--color-error)">
               This activity is not available for your selected dates. Please go
               back and choose different dates.
             </p>
@@ -222,13 +222,13 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
       </div>
 
       {/* Additional fees note */}
-      <p className="text-xs text-[var(--color-muted)]">
+      <p className="text-xs text-(--color-muted)">
         Marine Park Fee ($3) and Hyperbaric Chamber Fee ($1) per dive are
         included in the pricing above.
       </p>
 
       {error && (
-        <p className="text-sm text-[var(--color-error)]" role="alert">
+        <p className="text-sm text-(--color-error)" role="alert">
           {error}
         </p>
       )}

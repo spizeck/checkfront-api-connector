@@ -90,7 +90,7 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">How many in your group?</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Set the group size for {activityConfig?.name || "your activity"}
         </p>
       </div>
@@ -99,13 +99,13 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
         {paramDefs.map((p) => (
           <div
             key={p.key}
-            className="flex items-center justify-between rounded-lg border border-[var(--color-border)] p-4"
+            className="flex items-center justify-between rounded-lg border border-(--color-border) p-4"
           >
             <span className="font-medium">{p.label}</span>
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] transition-colors hover:bg-[var(--color-primary-light)] disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) transition-colors hover:bg-(--color-primary-light) disabled:opacity-50"
                 onClick={() => adjustParam(p.key, -1)}
                 disabled={(params[p.key] || 0) <= 0}
                 aria-label={`Decrease ${p.label}`}
@@ -117,7 +117,7 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
               </span>
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] transition-colors hover:bg-[var(--color-primary-light)] disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) transition-colors hover:bg-(--color-primary-light) disabled:opacity-50"
                 onClick={() => adjustParam(p.key, 1)}
                 disabled={(params[p.key] || 0) >= MAX_PER_PARAM}
                 aria-label={`Increase ${p.label}`}
@@ -130,17 +130,17 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
 
         {/* Rental equipment for dive activities */}
         {isDiveActivity && getTotalGuests() > 0 && (
-          <div className="flex items-center justify-between rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+          <div className="flex items-center justify-between rounded-lg border border-(--color-border) bg-(--color-surface) p-4">
             <div>
               <span className="font-medium">Full Rental Gear</span>
-              <p className="text-xs text-[var(--color-muted)]">
+              <p className="text-xs text-(--color-muted)">
                 BCD, regulator, wetsuit, mask, fins, dive computer
               </p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] transition-colors hover:bg-[var(--color-primary-light)] disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) transition-colors hover:bg-(--color-primary-light) disabled:opacity-50"
                 onClick={() => adjustRental(-1)}
                 disabled={rentalGearCount <= 0}
                 aria-label="Decrease rental gear"
@@ -152,7 +152,7 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
               </span>
               <button
                 type="button"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] transition-colors hover:bg-[var(--color-primary-light)] disabled:opacity-50"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-(--color-border) transition-colors hover:bg-(--color-primary-light) disabled:opacity-50"
                 onClick={() => adjustRental(1)}
                 disabled={rentalGearCount >= getTotalGuests()}
                 aria-label="Increase rental gear"
@@ -166,13 +166,13 @@ export function StepGuests({ state, updateState, onNext }: StepProps) {
 
       {/* Sunset cruise minimum reminder */}
       {isSunsetCruise && (
-        <p className="text-sm text-[var(--color-warning)]">
+        <p className="text-sm text-(--color-warning)">
           Sunset cruises require a minimum of 8 guests ($50/person).
         </p>
       )}
 
       {error && (
-        <p className="text-sm text-[var(--color-error)]" role="alert">
+        <p className="text-sm text-(--color-error)" role="alert">
           {error}
         </p>
       )}

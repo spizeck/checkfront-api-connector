@@ -124,7 +124,7 @@ export function StepDetails({ state, updateState, onNext }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">Your Details</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Please provide your contact information
         </p>
       </div>
@@ -157,17 +157,17 @@ export function StepDetails({ state, updateState, onNext }: StepProps) {
               <div key={key} className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium">
                   {layout.lbl}
-                  {isRequired && <span className="ml-1 text-[var(--color-error)]">*</span>}
+                  {isRequired && <span className="ml-1 text-(--color-error)">*</span>}
                 </label>
                 <textarea
                   rows={3}
                   required={isRequired}
                   value={formData[key] || ""}
                   onChange={(e) => updateField(key, e.target.value)}
-                  className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-1"
+                  className="rounded-lg border border-(--color-border) bg-(--color-background) px-3 py-2 text-sm transition-colors placeholder:text-(--color-muted) focus:border-(--color-primary) focus:outline-none focus:ring-2 focus:ring-(--color-primary) focus:ring-offset-1"
                 />
                 {errors[key] && (
-                  <p className="text-sm text-[var(--color-error)]" role="alert">{errors[key]}</p>
+                  <p className="text-sm text-(--color-error)" role="alert">{errors[key]}</p>
                 )}
               </div>
             );
@@ -180,7 +180,7 @@ export function StepDetails({ state, updateState, onNext }: StepProps) {
                   type="checkbox"
                   checked={formData[key] === "1"}
                   onChange={(e) => updateField(key, e.target.checked ? "1" : "0")}
-                  className="h-4 w-4 rounded border-[var(--color-border)]"
+                  className="h-4 w-4 rounded border-(--color-border)"
                 />
                 {layout.lbl}
               </label>

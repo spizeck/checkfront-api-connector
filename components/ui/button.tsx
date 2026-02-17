@@ -10,13 +10,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] focus:ring-[var(--color-primary)]",
+    "bg-(--color-primary) text-white hover:bg-(--color-primary-hover) focus:ring-(--color-primary)",
   secondary:
-    "border border-[var(--color-border)] bg-transparent hover:bg-[var(--color-primary-light)] focus:ring-[var(--color-primary)]",
+    "border border-(--color-border) bg-transparent hover:bg-(--color-primary-light) focus:ring-(--color-primary)",
   ghost:
-    "bg-transparent hover:bg-[var(--color-primary-light)] focus:ring-[var(--color-primary)]",
+    "bg-transparent hover:bg-(--color-primary-light) focus:ring-(--color-primary)",
   destructive:
-    "bg-[var(--color-error)] text-white hover:opacity-90 focus:ring-[var(--color-error)]",
+    "bg-(--color-error) text-white hover:opacity-90 focus:ring-(--color-error)",
 };
 
 const sizeClasses: Record<Size, string> = {

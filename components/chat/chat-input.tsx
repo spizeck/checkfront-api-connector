@@ -35,7 +35,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex gap-2 border-t border-[var(--color-border)] pt-4"
+      className="flex gap-2 border-t border-(--color-border) pt-4"
     >
       <textarea
         value={input}
@@ -44,7 +44,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         placeholder="Type your message..."
         disabled={disabled}
         rows={1}
-        className="flex-1 resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-2.5 text-sm transition-colors placeholder:text-[var(--color-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] disabled:opacity-50"
+        className="flex-1 resize-none rounded-lg border border-(--color-border) bg-(--color-background) px-4 py-2.5 text-sm transition-colors placeholder:text-(--color-muted) focus:border-(--color-primary) focus:outline-none focus:ring-2 focus:ring-(--color-primary) disabled:opacity-50"
         aria-label="Chat message"
       />
       <Button type="submit" disabled={disabled || !input.trim()}>

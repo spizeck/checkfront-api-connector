@@ -14,11 +14,11 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-xl border bg-[var(--color-surface)] p-6 transition-all ${
+      className={`rounded-xl border bg-(--color-surface) p-6 transition-all ${
         selected
-          ? "border-[var(--color-primary)] bg-[var(--color-primary-light)] ring-2 ring-[var(--color-primary)]"
-          : "border-[var(--color-border)]"
-      } ${hoverable ? "cursor-pointer hover:border-[var(--color-primary)] hover:shadow-md" : ""} ${className}`}
+          ? "border-(--color-primary) bg-(--color-primary-light) ring-2 ring-(--color-primary)"
+          : "border-(--color-border)"
+      } ${hoverable ? "cursor-pointer hover:border-(--color-primary) hover:shadow-md" : ""} ${className}`}
       {...props}
     >
       {children}

@@ -69,11 +69,11 @@ function ContactForm() {
   if (submitted) {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-success-light)] text-[var(--color-success)]">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--color-success-light) text-(--color-success)">
           <span className="text-xl" aria-hidden="true">&#10003;</span>
         </div>
         <h2 className="text-2xl font-bold">Message Sent</h2>
-        <p className="text-[var(--color-muted)]">
+        <p className="text-(--color-muted)">
           Thanks for reaching out. We&apos;ll get back to you as soon as
           possible.
         </p>
@@ -87,7 +87,7 @@ function ContactForm() {
   return (
     <div className="mx-auto max-w-lg py-8">
       <h2 className="text-2xl font-bold">Contact Us</h2>
-      <p className="mt-1 text-[var(--color-muted)]">
+      <p className="mt-1 text-(--color-muted)">
         Have a question or special request? Send us a message and we&apos;ll
         get back to you.
       </p>
@@ -107,7 +107,7 @@ function ContactForm() {
             required
             value={form.name}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--color-primary)"
           />
         </div>
 
@@ -125,7 +125,7 @@ function ContactForm() {
             required
             value={form.email}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--color-primary)"
           />
         </div>
 
@@ -143,7 +143,7 @@ function ContactForm() {
             required
             value={form.subject}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--color-primary)"
           />
         </div>
 
@@ -161,13 +161,13 @@ function ContactForm() {
             required
             value={form.message}
             onChange={handleChange}
-            className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            className="w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--color-primary)"
           />
         </div>
 
         {error && (
           <div
-            className="rounded-lg bg-[var(--color-error-light)] p-3 text-sm text-[var(--color-error)]"
+            className="rounded-lg bg-(--color-error-light) p-3 text-sm text-(--color-error)"
             role="alert"
           >
             {error}

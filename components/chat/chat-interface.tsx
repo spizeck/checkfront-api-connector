@@ -32,7 +32,7 @@ export function ChatInterface({
         {messages.length === 0 && (
           <div className="flex flex-col items-center gap-4 py-16 text-center">
             <h2 className="text-xl font-semibold">Booking Assistant</h2>
-            <p className="max-w-md text-[var(--color-muted)]">
+            <p className="max-w-md text-(--color-muted)">
               I can help you find and book activities. Tell me what
               you&apos;re looking for, or ask about our available options.
             </p>
@@ -46,7 +46,7 @@ export function ChatInterface({
 
           {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="flex justify-start">
-              <div className="rounded-lg bg-[var(--color-border)] px-4 py-2">
+              <div className="rounded-lg bg-(--color-border) px-4 py-2">
                 <span className="animate-pulse">Thinking...</span>
               </div>
             </div>
@@ -57,7 +57,7 @@ export function ChatInterface({
 
       {/* Error display */}
       {error && (
-        <div className="mx-4 mb-2 rounded-lg bg-[var(--color-error-light)] p-3 text-sm text-[var(--color-error)]">
+        <div className="mx-4 mb-2 rounded-lg bg-(--color-error-light) p-3 text-sm text-(--color-error)">
           Something went wrong. Please try again.
         </div>
       )}

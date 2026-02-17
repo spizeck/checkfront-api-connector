@@ -23,7 +23,7 @@ export function ToolResultCard({ toolName, result }: ToolResultCardProps) {
       return <CheckoutCard data={data} />;
     case "clearSession":
       return (
-        <div className="rounded border border-[var(--color-border)] p-2 text-xs text-[var(--color-muted)]">
+        <div className="rounded border border-(--color-border) p-2 text-xs text-(--color-muted)">
           Session cleared
         </div>
       );
@@ -41,7 +41,7 @@ function RateCard({ data }: { data: Record<string, unknown> }) {
   const status = data.status as string | undefined;
 
   return (
-    <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+    <div className="rounded border border-(--color-border) bg-(--color-surface) p-3">
       <div className="flex items-start justify-between gap-2">
         <p className="font-medium">{name}</p>
         {price && (
@@ -69,7 +69,7 @@ function CalendarCard({ data }: { data: Record<string, unknown> }) {
 
   if (entries.length === 0) {
     return (
-      <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-sm">
+      <div className="rounded border border-(--color-border) bg-(--color-surface) p-2 text-sm">
         No availability data found.
       </div>
     );
@@ -82,11 +82,7 @@ function CalendarCard({ data }: { data: Record<string, unknown> }) {
         return (
           <div
             key={date}
-            className={`rounded px-2 py-1 text-xs ${
-              isAvailable
-                ? "bg-[var(--color-success-light)] text-[var(--color-success)]"
-                : "bg-[var(--color-error-light)] text-[var(--color-error)]"
-            }`}
+            className={`rounded px-2 py-1 text-xs ${isAvailable ? "bg-(--color-success-light) text-(--color-success)" : "bg-(--color-error-light) text-(--color-error)"}`}
           >
             {date.slice(4, 6)}/{date.slice(6, 8)} ({stock})
           </div>
@@ -100,8 +96,8 @@ function SessionCard({ data }: { data: Record<string, unknown> }) {
   const total = data.total as number | undefined;
 
   return (
-    <div className="rounded border border-[var(--color-success)] bg-[var(--color-success-light)] p-3">
-      <p className="text-sm font-medium text-[var(--color-success)]">
+    <div className="rounded border border-(--color-success) bg-(--color-success-light) p-3">
+      <p className="text-sm font-medium text-(--color-success)">
         Added to booking!
       </p>
       {total !== undefined && (
@@ -137,15 +133,15 @@ function CheckoutCard({ data }: { data: Record<string, unknown> }) {
   }, [invoiceUrl]);
 
   return (
-    <div className="rounded-lg border-2 border-[var(--color-success)] bg-[var(--color-success-light)] p-5">
+    <div className="rounded-lg border-2 border-(--color-success) bg-(--color-success-light) p-5">
       <div className="flex items-center gap-2">
         <span className="text-2xl" aria-hidden="true">&#10003;</span>
-        <p className="text-lg font-bold text-[var(--color-success)]">
+        <p className="text-lg font-bold text-(--color-success)">
           Booking Created
         </p>
       </div>
       {bookingId && (
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
+        <p className="mt-1 text-sm text-(--color-muted)">
           Reference: {bookingId}
         </p>
       )}
@@ -160,11 +156,11 @@ function CheckoutCard({ data }: { data: Record<string, unknown> }) {
             href={invoiceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-[var(--color-primary)] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[var(--color-primary-hover)]"
+            className="mt-3 inline-flex items-center gap-2 rounded-lg bg-(--color-primary) px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-(--color-primary-hover)"
           >
             Complete Payment & Sign Waivers →
           </a>
-          <p className="mt-2 text-xs text-[var(--color-muted)]">
+          <p className="mt-2 text-xs text-(--color-muted)">
             Didn&apos;t open?{" "}
             <a
               href={invoiceUrl}
@@ -204,8 +200,8 @@ function ContactRequestCard({ data }: { data: Record<string, unknown> }) {
   const whatsapp = data.whatsapp as string | undefined;
 
   return (
-    <div className="rounded-lg border border-[var(--color-primary)] bg-[var(--color-primary-light)] p-4">
-      <p className="mb-2 text-sm font-semibold text-[var(--color-primary)]">
+    <div className="rounded-lg bg-(--color-primary) p-4">
+      <p className="mb-2 text-sm font-semibold text-(--color-primary)">
         Contact Request Prepared
       </p>
       {requestType && (
@@ -217,32 +213,32 @@ function ContactRequestCard({ data }: { data: Record<string, unknown> }) {
       <div className="mt-2 space-y-1 text-xs">
         {name && (
           <p>
-            <span className="text-[var(--color-muted)]">Name:</span> {name}
+            <span className="text-(--color-muted)">Name:</span> {name}
           </p>
         )}
         {email && (
           <p>
-            <span className="text-[var(--color-muted)]">Email:</span> {email}
+            <span className="text-(--color-muted)">Email:</span> {email}
           </p>
         )}
         {phone && (
           <p>
-            <span className="text-[var(--color-muted)]">Phone:</span> {phone}
+            <span className="text-(--color-muted)">Phone:</span> {phone}
           </p>
         )}
         {dates && (
           <p>
-            <span className="text-[var(--color-muted)]">Dates:</span> {dates}
+            <span className="text-(--color-muted)">Dates:</span> {dates}
           </p>
         )}
         {guests !== undefined && (
           <p>
-            <span className="text-[var(--color-muted)]">Guests:</span> {guests}
+            <span className="text-(--color-muted)">Guests:</span> {guests}
           </p>
         )}
         {details && (
           <p>
-            <span className="text-[var(--color-muted)]">Details:</span>{" "}
+            <span className="text-(--color-muted)">Details:</span>{" "}
             {details}
           </p>
         )}

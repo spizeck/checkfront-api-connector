@@ -29,10 +29,10 @@ export function Stepper({ currentStep }: StepperProps) {
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-colors ${
                     isCompleted
-                      ? "bg-[var(--color-success)] text-white"
+                      ? "bg-(--color-success) text-white"
                       : isCurrent
-                        ? "bg-[var(--color-primary)] text-white"
-                        : "bg-[var(--color-border)] text-[var(--color-muted)]"
+                        ? "bg-(--color-primary) text-white"
+                        : "bg-(--color-border) text-(--color-muted)"
                   }`}
                   aria-current={isCurrent ? "step" : undefined}
                 >
@@ -40,7 +40,7 @@ export function Stepper({ currentStep }: StepperProps) {
                 </div>
                 <span
                   className={`mt-1 hidden text-xs sm:block ${
-                    isCurrent ? "font-medium" : "text-[var(--color-muted)]"
+                    isCurrent ? "font-medium" : "text-(--color-muted)"
                   }`}
                 >
                   {STEP_LABELS[step]}
@@ -50,8 +50,8 @@ export function Stepper({ currentStep }: StepperProps) {
                 <div
                   className={`h-0.5 w-6 sm:w-10 ${
                     index < currentIndex
-                      ? "bg-[var(--color-success)]"
-                      : "bg-[var(--color-border)]"
+                      ? "bg-(--color-success)"
+                      : "bg-(--color-border)"
                   }`}
                 />
               )}

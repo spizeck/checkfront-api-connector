@@ -102,7 +102,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">When would you like to go?</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           {isSingleDayItem
             ? `Pick a date for ${activityName}`
             : `Select your start and end dates for ${activityName}`}
@@ -137,9 +137,9 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
 
       {/* Selection summary */}
       {startDate && (
-        <div className="rounded-lg border border-[var(--color-border)] p-4 text-sm">
+        <div className="rounded-lg border border-(--color-border) p-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-[var(--color-muted)]">
+            <span className="text-(--color-muted)">
               {isSingleDayItem ? "Date" : "Start Date"}
             </span>
             <span className="font-medium">
@@ -149,13 +149,13 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
           {!isSingleDayItem && endDate && (
             <>
               <div className="mt-2 flex justify-between">
-                <span className="text-[var(--color-muted)]">End Date</span>
+                <span className="text-(--color-muted)">End Date</span>
                 <span className="font-medium">
                   {format(endDate, "EEEE, MMMM d, yyyy")}
                 </span>
               </div>
               <div className="mt-2 flex justify-between">
-                <span className="text-[var(--color-muted)]">Duration</span>
+                <span className="text-(--color-muted)">Duration</span>
                 <span className="font-medium">
                   {numDays} day{numDays === 1 ? "" : "s"} of diving
                   {numDays === 2 && " ~5% multi-day discount"}
@@ -167,7 +167,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
             </>
           )}
           {!isSingleDayItem && !endDate && (
-            <p className="mt-2 text-[var(--color-muted)]">
+            <p className="mt-2 text-(--color-muted)">
               Now click your end date on the calendar
             </p>
           )}
@@ -175,7 +175,7 @@ export function StepDates({ state, updateState, onNext }: StepProps) {
       )}
 
       {error && (
-        <p className="text-sm text-[var(--color-error)]" role="alert">
+        <p className="text-sm text-(--color-error)" role="alert">
           {error}
         </p>
       )}

@@ -7,10 +7,10 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  success: "bg-[var(--color-success-light)] text-[var(--color-success)]",
-  warning: "bg-[var(--color-warning-light)] text-[var(--color-warning)]",
-  error: "bg-[var(--color-error-light)] text-[var(--color-error)]",
-  neutral: "bg-[var(--color-border)] text-[var(--color-muted)]",
+  success: "bg-(--color-success-light) text-(--color-success)",
+  warning: "bg-(--color-warning-light) text-(--color-warning)",
+  error: "bg-(--color-error-light) text-(--color-error)",
+  neutral: "bg-(--color-border) text-(--color-muted)",
 };
 
 export function Badge({ variant = "neutral", children, className = "" }: BadgeProps) {

@@ -45,7 +45,7 @@ export function ItemCard({ item, selected, onSelect }: ItemCardProps) {
       </div>
       <CardContent>
         {cleanSummary && (
-          <p className="mt-2 line-clamp-3 text-sm text-[var(--color-muted)]">
+          <p className="mt-2 line-clamp-3 text-sm text-(--color-muted)">
             {cleanSummary}
           </p>
         )}
@@ -55,7 +55,7 @@ export function ItemCard({ item, selected, onSelect }: ItemCardProps) {
               {item.rate.summary?.price?.total || "Price on request"}
             </span>
             {item.rate.summary?.price?.unit && (
-              <span className="text-sm text-[var(--color-muted)]">
+              <span className="text-sm text-(--color-muted)">
                 {item.rate.summary.price.unit}
               </span>
             )}

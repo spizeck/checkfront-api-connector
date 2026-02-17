@@ -16,11 +16,11 @@ export default function ChatError({
 
   return (
     <div className="flex flex-col items-center gap-6 py-20 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-error-light)]">
-        <span className="text-2xl text-[var(--color-error)]">!</span>
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--color-error-light)">
+        <span className="text-2xl text-(--color-error)">!</span>
       </div>
       <h2 className="text-2xl font-bold">Chat Error</h2>
-      <p className="max-w-md text-[var(--color-muted)]">
+      <p className="max-w-md text-(--color-muted)">
         The AI assistant encountered an error. Please try again.
       </p>
       <div className="flex gap-3">

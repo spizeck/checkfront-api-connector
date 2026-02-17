@@ -47,17 +47,17 @@ export function StepCheckout({ state, session }: StepProps) {
   if (invoiceUrl) {
     return (
       <div className="flex flex-col items-center gap-6 py-12 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-success-light)]">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--color-success-light)">
           <span className="text-2xl">&#10003;</span>
         </div>
         <h2 className="text-2xl font-bold">Booking Created!</h2>
-        <p className="text-[var(--color-muted)]">
+        <p className="text-(--color-muted)">
           Redirecting you to complete payment...
         </p>
         <Spinner size="md" />
         <a
           href={invoiceUrl}
-          className="text-sm text-[var(--color-primary)] underline"
+          className="text-sm text-(--color-primary) underline"
         >
           Click here if not redirected automatically
         </a>
@@ -69,20 +69,20 @@ export function StepCheckout({ state, session }: StepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">Confirm Your Booking</h2>
-        <p className="mt-1 text-[var(--color-muted)]">
+        <p className="mt-1 text-(--color-muted)">
           Review everything one last time, then submit to proceed to payment
         </p>
       </div>
 
       <div className="space-y-4">
         {/* Activity summary */}
-        <div className="rounded-lg border border-[var(--color-border)] p-4">
+        <div className="rounded-lg border border-(--color-border) p-4">
           <h3 className="mb-2 font-semibold">Activity</h3>
           <p className="font-medium">
             {activityInfo?.name || state.ratedItem?.name}
           </p>
           {state.startDate && (
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="text-sm text-(--color-muted)">
               {formatCfDate(state.startDate)}
               {state.endDate && state.endDate !== state.startDate && (
                 <> to {formatCfDate(state.endDate)}</>
@@ -91,7 +91,7 @@ export function StepCheckout({ state, session }: StepProps) {
             </p>
           )}
           {Object.entries(state.params).map(([key, val]) => (
-            <p key={key} className="text-sm text-[var(--color-muted)]">
+            <p key={key} className="text-sm text-(--color-muted)">
               <span className="capitalize">{key}</span>: {val}
             </p>
           ))}
@@ -103,11 +103,11 @@ export function StepCheckout({ state, session }: StepProps) {
         </div>
 
         {/* Customer details */}
-        <div className="rounded-lg border border-[var(--color-border)] p-4">
+        <div className="rounded-lg border border-(--color-border) p-4">
           <h3 className="mb-2 font-semibold">Contact Details</h3>
           {Object.entries(state.customerForm).map(([key, value]) => (
             <p key={key} className="text-sm">
-              <span className="capitalize text-[var(--color-muted)]">
+              <span className="capitalize text-(--color-muted)">
                 {key.replace("customer_", "").replace(/_/g, " ")}
               </span>
               : {value}
@@ -117,7 +117,7 @@ export function StepCheckout({ state, session }: StepProps) {
       </div>
 
       {error && (
-        <p className="text-sm text-[var(--color-error)]" role="alert">
+        <p className="text-sm text-(--color-error)" role="alert">
           {error}
         </p>
       )}

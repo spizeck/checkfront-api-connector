@@ -17,15 +17,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <label htmlFor={selectId} className="text-sm font-medium">
             {label}
             {props.required && (
-              <span className="ml-1 text-[var(--color-error)]">*</span>
+              <span className="ml-1 text-(--color-error)">*</span>
             )}
           </label>
         )}
         <select
           ref={ref}
           id={selectId}
-          className={`rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-2 text-sm transition-colors focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${
-            error ? "border-[var(--color-error)]" : ""
+          className={`rounded-lg border border-(--color-border) bg-(--color-background) px-3 py-2 text-sm transition-colors focus:border-(--color-primary) focus:outline-none focus:ring-2 focus:ring-(--color-primary) focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${
+            error ? "border-(--color-error)" : ""
           } ${className}`}
           aria-invalid={error ? "true" : undefined}
           {...props}
@@ -42,7 +42,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ))}
         </select>
         {error && (
-          <p className="text-sm text-[var(--color-error)]" role="alert">
+          <p className="text-sm text-(--color-error)" role="alert">
             {error}
           </p>
         )}
