@@ -17,7 +17,6 @@ export function CartModal({ isOpen, onClose, sessionId, onRefresh }: CartModalPr
   const [cartData, setCartData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [removingIndex, setRemovingIndex] = useState<number | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     itemName: string;
@@ -94,6 +93,7 @@ export function CartModal({ isOpen, onClose, sessionId, onRefresh }: CartModalPr
       
       if (Object.keys(alterParams).length === 0) {
         console.error('No valid items to remove');
+        setRemovingIndex(null);
         return;
       }
       
