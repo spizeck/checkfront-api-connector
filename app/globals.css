@@ -6,6 +6,7 @@
    ────────────────────────────────────────────── */
 
 :root {
+  --font-heading: "Century Gothic", "Avenir", "Futura", system-ui, sans-serif;
   /* Primary Brand Colors */
   --color-primary: #171C8F;        /* Sea Saba Blue */
   --color-primary-hover: #111572;  /* Darker Sea Saba Blue */
@@ -61,11 +62,21 @@
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: "Open Sans", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-open-sans), system-ui, -apple-system, sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Century Gothic", "Avenir", "Futura", system-ui, sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3,
+.prose-chat h4,
+.rdp-month_caption {
+  font-family: var(--font-heading);
 }
 
 /* ──────────────────────────────────────────────
@@ -121,7 +132,6 @@ h1, h2, h3, h4, h5, h6 {
 .prose-chat h2,
 .prose-chat h3,
 .prose-chat h4 {
-  font-family: "Century Gothic", "Avenir", "Futura", system-ui, sans-serif;
   font-weight: 700;
   margin: 0.6em 0 0.3em;
 }
@@ -244,7 +254,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .rdp-month_caption {
-  font-family: "Century Gothic", "Avenir", "Futura", system-ui, sans-serif;
   font-weight: 600;
   font-size: 1rem;
 }

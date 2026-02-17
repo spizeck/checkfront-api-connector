@@ -70,7 +70,7 @@ function ContactForm() {
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--color-success-light)] text-[var(--color-success)]">
-          <span className="text-xl">&#10003;</span>
+          <span className="text-xl" aria-hidden="true">&#10003;</span>
         </div>
         <h2 className="text-2xl font-bold">Message Sent</h2>
         <p className="text-[var(--color-muted)]">

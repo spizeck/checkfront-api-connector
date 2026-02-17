@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
+
+const openSans = Open_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-open-sans",
+});
 
 export const metadata: Metadata = {
   title: "Sea Saba Diving — Booking",
@@ -13,13 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="min-h-screen antialiased">
+      <body className={`${openSans.variable} min-h-screen antialiased`}>
         <header className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4">
           <div className="mx-auto max-w-5xl">
             <a href="/" className="text-xl font-bold text-[var(--color-primary)]">
