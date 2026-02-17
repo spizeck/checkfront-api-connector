@@ -14,7 +14,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-xl border p-6 transition-all ${
+      className={`rounded-xl border bg-[var(--color-surface)] p-6 transition-all ${
         selected
           ? "border-[var(--color-primary)] bg-[var(--color-primary-light)] ring-2 ring-[var(--color-primary)]"
           : "border-[var(--color-border)]"

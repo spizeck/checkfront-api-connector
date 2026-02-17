@@ -41,7 +41,7 @@ function RateCard({ data }: { data: Record<string, unknown> }) {
   const status = data.status as string | undefined;
 
   return (
-    <div className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-3">
+    <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
       <div className="flex items-start justify-between gap-2">
         <p className="font-medium">{name}</p>
         {price && (
@@ -69,7 +69,7 @@ function CalendarCard({ data }: { data: Record<string, unknown> }) {
 
   if (entries.length === 0) {
     return (
-      <div className="rounded border border-[var(--color-border)] bg-[var(--color-background)] p-2 text-sm">
+      <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-2 text-sm">
         No availability data found.
       </div>
     );
@@ -139,9 +139,9 @@ function CheckoutCard({ data }: { data: Record<string, unknown> }) {
   return (
     <div className="rounded-lg border-2 border-[var(--color-success)] bg-[var(--color-success-light)] p-5">
       <div className="flex items-center gap-2">
-        <span className="text-2xl" aria-hidden="true">✅</span>
+        <span className="text-2xl" aria-hidden="true">&#10003;</span>
         <p className="text-lg font-bold text-[var(--color-success)]">
-          Booking Created!
+          Booking Created
         </p>
       </div>
       {bookingId && (

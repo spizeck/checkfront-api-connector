@@ -1,41 +1,82 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────
+   Sea Saba Brand Palette
+   See THEME_UX_GUIDE.md for full color reference
+   ────────────────────────────────────────────── */
+
 :root {
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #dbeafe;
-  --color-success: #16a34a;
-  --color-success-light: #dcfce7;
-  --color-warning: #d97706;
-  --color-warning-light: #fef3c7;
-  --color-error: #dc2626;
-  --color-error-light: #fee2e2;
-  --color-background: #ffffff;
-  --color-foreground: #0a0a0a;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
+  --font-heading: "Century Gothic", "Avenir", "Futura", system-ui, sans-serif;
+  /* Primary Brand Colors */
+  --color-primary: #171C8F;        /* Sea Saba Blue */
+  --color-primary-hover: #111572;  /* Darker Sea Saba Blue */
+  --color-primary-light: #E8E9F5; /* Light tint of brand blue */
+  --color-accent: #9D2235;         /* Sea Saba Red — use sparingly */
+
+  /* Deep Tones */
+  --color-abyss: #0B0F3B;          /* Abyss Navy */
+  --color-slate: #2C3E50;          /* Volcanic Slate */
+
+  /* Neutral Foundation */
+  --color-background: #F5F6FA;     /* Drift White */
+  --color-surface: #FFFFFF;        /* Pure White — cards, panels */
+  --color-sand: #E8E0D5;           /* Sand — warm accent */
+
+  /* Text */
+  --color-foreground: #1A1A2E;     /* Primary text */
+  --color-muted: #6B7280;          /* Secondary text */
+  --color-inverse: #FFFFFF;        /* Text on dark backgrounds */
+
+  /* Functional */
+  --color-success: #2E7D6F;        /* Conservation Green */
+  --color-success-light: #E0F2EE;
+  --color-warning: #D4A843;        /* Muted gold */
+  --color-warning-light: #FBF3DE;
+  --color-error: #9D2235;          /* Sea Saba Red */
+  --color-error-light: #F5E1E4;
+
+  /* Borders */
+  --color-border: #D9DBE4;         /* Slightly cool-toned border */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
-    --color-muted: #9ca3af;
-    --color-border: #374151;
-    --color-primary-light: #1e3a5f;
-    --color-success-light: #14532d;
-    --color-warning-light: #451a03;
-    --color-error-light: #450a0a;
+    --color-background: #0B0F3B;   /* Abyss Navy */
+    --color-surface: #131845;      /* Slightly lighter navy for cards */
+    --color-foreground: #E8E9F5;
+    --color-muted: #9CA3AF;
+    --color-border: #2A2F5A;
+    --color-primary-light: #1A2060;
+    --color-success-light: #1A3A33;
+    --color-warning-light: #3A2E10;
+    --color-error-light: #3A1520;
   }
 }
+
+/* ──────────────────────────────────────────────
+   Typography
+   Headings: Century Gothic (with fallbacks)
+   Body: Open Sans (with fallbacks)
+   ────────────────────────────────────────────── */
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-open-sans), system-ui, -apple-system, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3,
+.prose-chat h4,
+.rdp-month_caption {
+  font-family: var(--font-heading);
 }
 
 /* ──────────────────────────────────────────────
@@ -108,7 +149,7 @@ body {
 }
 
 .prose-chat code {
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.06);
   padding: 0.15em 0.35em;
   border-radius: 4px;
   font-size: 0.9em;
@@ -126,7 +167,7 @@ body {
   padding: 0.75em;
   border-radius: 6px;
   overflow-x: auto;
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 @media (prefers-color-scheme: dark) {
