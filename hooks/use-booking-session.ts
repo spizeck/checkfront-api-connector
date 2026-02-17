@@ -59,11 +59,29 @@ export function useBookingSession(): UseBookingSessionReturn {
   }, [fetchApi]);
 
   const clearSession = useCallback(async () => {
-    const result = await fetchApi<{ success: boolean }>("/api/session/clear", {
-      method: "POST",
-    });
-    return result?.success ?? false;
-  }, [fetchApi]);
+    setLoading(true);
+    try {
+      const response = await fetch("/api/session/clear", {
+        method: "POST",
+      });
+      // Don't treat 404 as an error - it just means no session to clear
+      if (response.status === 404) {
+        return false;
+      }
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || `Request failed (${response.status})`);
+      }
+      const result = await response.json();
+      return result?.success ?? false;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An error occurred";
+      setError(message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const getBookingForm = useCallback(async () => {
     return fetchApi<BookingFormResponse>("/api/booking/form");

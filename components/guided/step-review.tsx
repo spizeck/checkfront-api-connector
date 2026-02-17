@@ -6,6 +6,7 @@ import type { CheckfrontItem } from "@/lib/checkfront-types";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { stripHtml } from "@/lib/utils";
 import {
   formatCfDate,
@@ -24,6 +25,14 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
   const [marineParkFeeItem, setMarineParkFeeItem] = useState<CheckfrontItem | null>(null);
   const [existingSessionData, setExistingSessionData] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [removingItemIndex, setRemovingItemIndex] = useState<number | null>(null);
+  const [itemAddedToCart, setItemAddedToCart] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, title: "", message: "", onConfirm: () => {} });
 
   const activityInfo = state.selectedItemId
     ? ACTIVITY_INFO[state.selectedItemId]
@@ -139,7 +148,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.selectedItemId, state.startDate, state.endDate, state.rentalGearCount]);
 
-  async function handleConfirm() {
+  async function addToCart() {
     if (!state.selectedSlip) {
       setError("No booking token available. Please go back and try again.");
       return;
@@ -156,7 +165,7 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
       );
       
       if (!result) {
-        setError("Failed to add to booking. Please try again.");
+        setError("Failed to add to cart. Please try again.");
         setSubmitting(false);
         return;
       }
@@ -228,12 +237,16 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
       }
 
       updateState({ sessionId });
-      onNext();
+      setItemAddedToCart(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add to booking. Please try again.");
+      setError(err instanceof Error ? err.message : "Failed to add to cart. Please try again.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function proceedToDetails() {
+    onNext();
   }
 
   if (loading) {
@@ -270,163 +283,11 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold">Review & Confirm Pricing</h2>
+        <h2 className="text-2xl font-bold">Review Activity</h2>
         <p className="mt-1 text-(--color-muted)">
-          Verify the details and pricing below, then continue to enter your
-          details
+          Review the details and pricing below, then add to cart or proceed to checkout
         </p>
       </div>
-
-      {/* Existing Session Items */}
-      {existingSessionData && Object.keys(existingSessionData.item || {}).length > 0 && (() => {
-        // Group items by main activity - each main activity with its associated fees
-        const itemsArray = Object.values(existingSessionData.item);
-        const mainActivityIds = [
-          CF_ITEMS.advanced2Tank,
-          CF_ITEMS.classic2Tank,
-          CF_ITEMS.afternoonDive,
-          CF_ITEMS.afternoonSnorkel,
-          CF_ITEMS.sunsetCruise,
-        ];
-
-        // Find all main activities
-        const mainActivities = itemsArray.filter((item: any) => 
-          mainActivityIds.includes(item.item_id) && 
-          parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
-        );
-
-        if (mainActivities.length === 0) return null;
-
-        return (
-          <>
-            {mainActivities.map((mainItem: any, index: number) => {
-              // Find associated rental gear and marine park fees for this activity
-              // Match by date range
-              const associatedItems = itemsArray.filter((item: any) => {
-                if (item === mainItem) return false;
-                if (item.item_id !== CF_ITEMS.rentalGear && item.item_id !== CF_ITEMS.marineParkFee) return false;
-                
-                const total = parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0');
-                if (total === 0) return false;
-                
-                // Match by date range
-                return item.date?.start_date === mainItem.date?.start_date && 
-                       item.date?.end_date === mainItem.date?.end_date;
-              });
-
-              const rentalGear = associatedItems.find((item: any) => item.item_id === CF_ITEMS.rentalGear) as any;
-              const marineParkFee = associatedItems.find((item: any) => item.item_id === CF_ITEMS.marineParkFee) as any;
-
-              return (
-                <div key={index} className="rounded-lg border border-(--color-border) p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold">{mainItem.name}</h3>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="success">In Cart</Badge>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={async () => {
-                          if (!state.sessionId) return;
-                          
-                          try {
-                            // Remove the main item and its associated items from session
-                            const itemsToRemove = [mainItem.slip];
-                            if (rentalGear) itemsToRemove.push(rentalGear.slip);
-                            if (marineParkFee) itemsToRemove.push(marineParkFee.slip);
-                            
-                            // Alter session to remove items
-                            const alterParams: Record<string, string> = {};
-                            itemsToRemove.forEach(slip => {
-                              alterParams[slip] = '0'; // Setting quantity to 0 removes the item
-                            });
-                            
-                            const response = await fetch('/api/session', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                session_id: state.sessionId,
-                                alter: alterParams,
-                              }),
-                            });
-                            
-                            if (response.ok) {
-                              // Refresh the session data
-                              const sessionData = await session.getSession();
-                              if (sessionData) {
-                                setExistingSessionData(sessionData.booking.session);
-                              }
-                            }
-                          } catch (err) {
-                            console.error('Failed to remove item:', err);
-                          }
-                        }}
-                        className="text-(--color-error) hover:bg-(--color-error-light)"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid gap-2 text-sm">
-                    {mainItem.date?.summary && (
-                      <div className="flex justify-between">
-                        <span className="text-(--color-muted)">Date</span>
-                        <span>{mainItem.date.summary}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-4 border-t border-(--color-border) pt-4">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-(--color-muted)">{mainItem.name}</span>
-                        <span className="font-semibold">{mainItem.rate.total}</span>
-                      </div>
-
-                      {rentalGear && (
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-(--color-muted)">{rentalGear.name}</span>
-                          <span className="font-semibold">{rentalGear.rate.total}</span>
-                        </div>
-                      )}
-
-                      {marineParkFee && (
-                        <div className="flex items-baseline justify-between">
-                          <span className="text-(--color-muted)">Marine Park & Hyperbaric Fees</span>
-                          <span className="font-semibold">{marineParkFee.rate.total}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-3 flex items-baseline justify-between border-t border-(--color-border) pt-3">
-                      <span className="font-medium">Total Price</span>
-                      <span className="text-2xl font-bold">
-                        {(() => {
-                          const mainPrice = parseFloat(mainItem.rate.total.replace(/[^0-9.]/g, '') || '0');
-                          const rentalPrice = rentalGear ? parseFloat(rentalGear.rate.total.replace(/[^0-9.]/g, '') || '0') : 0;
-                          const feePrice = marineParkFee ? parseFloat(marineParkFee.rate.total.replace(/[^0-9.]/g, '') || '0') : 0;
-                          const total = mainPrice + rentalPrice + feePrice;
-                          return `$${total.toFixed(2)}`;
-                        })()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            <div className="rounded-lg border-2 border-(--color-primary) bg-(--color-primary-light) p-5">
-              <div className="flex justify-between items-baseline">
-                <span className="text-lg font-semibold">Cart Subtotal</span>
-                <span className="text-2xl font-bold">{existingSessionData.total}</span>
-              </div>
-            </div>
-          </>
-        );
-      })()}
 
       {/* Current Activity Being Added */}
       <div className="rounded-lg border border-(--color-border) p-5">
@@ -566,8 +427,30 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
 
       <div className="flex items-center justify-between gap-4">
         <Button
-          variant="secondary"
-          onClick={async () => {
+          variant="ghost"
+          onClick={() => {
+            // Clear current item and go back to activity selection
+            setItemAddedToCart(false);
+            updateState({
+              selectedItemId: null,
+              startDate: null,
+              endDate: null,
+              params: {},
+              ratedItem: null,
+              selectedSlip: null,
+              rentalGearCount: 0,
+              certConfirmed: false,
+              currentStep: BOOKING_STEPS[0],
+            });
+          }}
+        >
+          Clear Current Item
+        </Button>
+
+        <div className="flex gap-3">
+          <Button
+            variant="secondary"
+            onClick={async () => {
             // Add current activity to session first
             if (state.selectedSlip) {
               setSubmitting(true);
@@ -669,19 +552,51 @@ export function StepReview({ state, updateState, onNext, session }: StepProps) {
           Add Another Activity
         </Button>
 
-        <Button
-          onClick={handleConfirm}
-          disabled={submitting || isUnavailable || !state.selectedSlip}
-        >
-          {submitting ? (
-            <span className="flex items-center gap-2">
-              <Spinner size="sm" /> Adding to booking...
-            </span>
-          ) : (
-            "Next: Your Details"
-          )}
-        </Button>
+          <Button
+            onClick={itemAddedToCart ? proceedToDetails : addToCart}
+            disabled={submitting || isUnavailable || !state.selectedSlip}
+          >
+            {submitting ? (
+              <span className="flex items-center gap-2">
+                <Spinner size="sm" /> Adding to cart...
+              </span>
+            ) : itemAddedToCart ? (
+              "Next: Your Details"
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
+        </div>
       </div>
+
+      {/* Share Cart Button */}
+      {state.sessionId && (
+        <div className="flex justify-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              const shareUrl = `${window.location.origin}/guided?session=${state.sessionId}`;
+              navigator.clipboard.writeText(shareUrl);
+              alert('Cart link copied to clipboard! Share this link to resume your booking later.');
+            }}
+          >
+            📋 Save & Share Cart
+          </Button>
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        confirmText="Remove"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+      />
     </div>
   );
 }

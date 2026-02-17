@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBookingForm, type BookingFormState } from "@/hooks/use-booking-form";
 import { useBookingSession } from "@/hooks/use-booking-session";
 import { Stepper } from "@/components/ui/stepper";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { StepActivity } from "@/components/guided/step-activity";
 import { StepDates } from "@/components/guided/step-dates";
 import { StepGuests } from "@/components/guided/step-guests";
 import { StepReview } from "@/components/guided/step-review";
 import { StepDetails } from "@/components/guided/step-customer";
 import { StepCheckout } from "@/components/guided/step-confirm";
+import { CartModal } from "@/components/guided/cart-modal";
+import { SessionTimer } from "@/components/guided/session-timer";
 import type { BookingStep } from "@/lib/constants";
 
 export interface StepProps {
@@ -33,17 +36,73 @@ export default function GuidedBookingPage() {
   const { state, nextStep, prevStep, updateState, isFirstStep, resetForm } =
     useBookingForm();
   const session = useBookingSession();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const [cartTotal, setCartTotal] = useState<string>('');
 
   // Clear any existing session when the page first loads
   useEffect(() => {
-    session.clearSession();
+    async function clearExistingSession() {
+      try {
+        await session.clearSession();
+      } catch (err) {
+        // No active session to clear, which is fine for fresh page loads
+      }
+    }
+    clearExistingSession();
   }, []);
+
+  // Fetch cart count and total when session changes
+  useEffect(() => {
+    async function fetchCartInfo() {
+      if (!state.sessionId) {
+        setCartCount(0);
+        setCartTotal('');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/session');
+        if (response.ok) {
+          const data = await response.json();
+          const mainActivityIds = [5, 133, 11, 12, 194];
+          const count = Object.values(data.booking.session.item || {}).filter(
+            (item: any) =>
+              mainActivityIds.includes(item.item_id) &&
+              parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
+          ).length;
+          setCartCount(count);
+          setCartTotal(data.booking.session.total || '');
+        }
+      } catch (err) {
+        // Ignore errors
+      }
+    }
+
+    fetchCartInfo();
+  }, [state.sessionId]);
 
   const StepComponent = STEP_COMPONENTS[state.currentStep];
 
   return (
     <div className="guided-embed-light rounded-xl border border-(--color-border) bg-(--color-background) p-6 text-(--color-foreground)">
       <div className="flex flex-col gap-8">
+      {/* Cart Button */}
+      {state.sessionId && cartCount > 0 && (
+        <div className="flex justify-end">
+          <Button
+            variant="secondary"
+            onClick={() => setIsCartOpen(true)}
+            className="relative"
+          >
+            🛒 View Cart: {cartTotal}
+          </Button>
+        </div>
+      )}
+      
+      {/* Session Timer */}
+      <SessionTimer sessionId={state.sessionId} />
+      
       <Stepper currentStep={state.currentStep} />
 
       <div className="min-h-400px">
@@ -79,6 +138,30 @@ export default function GuidedBookingPage() {
         </div>
       )}
       </div>
+
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        sessionId={state.sessionId}
+        onRefresh={() => {
+          // Refresh cart count
+          if (state.sessionId) {
+            fetch('/api/session')
+              .then(res => res.json())
+              .then(data => {
+                const mainActivityIds = [5, 133, 11, 12, 194];
+                const count = Object.values(data.booking.session.item || {}).filter(
+                  (item: any) =>
+                    mainActivityIds.includes(item.item_id) &&
+                    parseFloat(item.rate?.total?.replace(/[^0-9.]/g, '') || '0') > 0
+                ).length;
+                setCartCount(count);
+              })
+              .catch(() => {});
+          }
+        }}
+      />
     </div>
   );
 }
