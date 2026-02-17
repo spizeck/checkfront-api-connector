@@ -13,7 +13,9 @@
       "Bash(npm run build:*)",
       "Bash(node -e:*)",
       "Bash(dir node_modulesreact-day-picker /s /b)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nApply Sea Saba brand palette, typography, and tone to match THEME_UX_GUIDE\n\nReplace generic Tailwind colors with Sea Saba brand palette \\(Sea Saba Blue,\nConservation Green, muted gold, Sea Saba Red\\). Add Century Gothic headings\nand Open Sans body typography. Update backgrounds to Drift White with white\nsurface cards, and dark mode to Abyss Navy. Add missing design tokens\n\\(Sand, Volcanic Slate, Abyss Navy, surface, accent\\). Adjust copy tone to\nbe composed and non-promotional, remove emoji icons, and fix broken CSS\nvariable syntax in contact page and booking summary.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
